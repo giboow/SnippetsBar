@@ -5,7 +5,7 @@ import SnippetsBarCore
 final class SnippetStore: ObservableObject {
     @Published private(set) var snippets: [Snippet] = []
     @Published var errorMessage: String?
-    @Published var toast: String?
+    @Published var toast: Toast?
     @Published private(set) var launchAtLogin = LaunchAtLogin.isEnabled
 
     private let repository: SnippetRepository
@@ -55,10 +55,10 @@ final class SnippetStore: ObservableObject {
         do {
             plan = ImportPlan(importing: try PlistImporter.drafts(from: url), into: snippets)
         } catch {
-            return flash("Fichier .plist invalide")
+            return flash("Fichier .plist invalide", .error)
         }
         guard !plan.isEmpty else {
-            return flash("Rien à importer (\(plan.duplicateCount) déjà présent\(plan.duplicateCount > 1 ? "s" : ""))")
+            return flash("Rien à importer (\(plan.duplicateCount) déjà présent\(plan.duplicateCount > 1 ? "s" : ""))", .info)
         }
 
         var replace = false
@@ -102,12 +102,12 @@ final class SnippetStore: ObservableObject {
             try LaunchAtLogin.setEnabled(enabled)
             if LaunchAtLogin.requiresApproval {
                 LaunchAtLogin.openSystemSettings()
-                flash("À autoriser dans Réglages Système")
+                flash("À autoriser dans Réglages Système", .info)
             } else {
                 flash(enabled ? "Ouverture au démarrage activée" : "Ouverture au démarrage désactivée")
             }
         } catch {
-            flash("Impossible de modifier l'ouverture au démarrage")
+            flash("Impossible de modifier l'ouverture au démarrage", .error)
         }
         refreshLaunchAtLogin()
     }
@@ -126,11 +126,17 @@ final class SnippetStore: ObservableObject {
         }
     }
 
-    private func flash(_ message: String) {
-        toast = message
+    func dismissToast() {
+        toast = nil
+    }
+
+    private func flash(_ message: String, _ kind: Toast.Kind = .success) {
+        let toast = Toast(message: message, kind: kind)
+        self.toast = toast
+        SystemActions.announce(message)
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 1_600_000_000)
-            if toast == message { toast = nil }
+            try? await Task.sleep(nanoseconds: UInt64(toast.duration * 1_000_000_000))
+            if self.toast?.id == toast.id { self.toast = nil }
         }
     }
 }

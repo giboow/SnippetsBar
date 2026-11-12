@@ -34,6 +34,13 @@ enum SystemActions {
         return response.rawValue - NSApplication.ModalResponse.alertFirstButtonReturn.rawValue
     }
 
+    /// Lit le message avec VoiceOver (sans effet si VoiceOver est inactif).
+    static func announce(_ message: String) {
+        NSAccessibility.post(element: NSApp as Any, notification: .announcementRequested,
+                             userInfo: [.announcement: message,
+                                        .priority: NSAccessibilityPriorityLevel.high.rawValue])
+    }
+
     static func openFullDiskAccessSettings() {
         open("x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")
     }

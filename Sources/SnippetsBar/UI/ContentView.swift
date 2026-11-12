@@ -23,11 +23,8 @@ struct ContentView: View {
             }
 
             if let toast = store.toast {
-                Text(toast)
-                    .font(.callout.weight(.medium))
-                    .padding(.horizontal, 12).padding(.vertical, 6)
-                    .background(.thickMaterial, in: Capsule())
-                    .padding(.bottom, 44)
+                ToastView(toast: toast) { store.dismissToast() }
+                    .padding(.bottom, 48)
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
             }
         }
