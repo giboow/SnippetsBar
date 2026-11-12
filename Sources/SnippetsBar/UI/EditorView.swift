@@ -46,11 +46,11 @@ struct EditorView: View {
                         .font(.system(.body, design: .monospaced))
                         .focused($focus, equals: .shortcut)
                     if draft.shortcutHasWhitespace {
-                        hint("Le raccourci ne doit pas contenir d'espace.", color: .red)
+                        hint("Le raccourci ne doit pas contenir d'espace.", icon: "xmark.octagon.fill", color: .red)
                     } else if isDuplicate {
-                        hint("Ce raccourci existe déjà.", color: .orange)
+                        hint("Ce raccourci existe déjà.", icon: "exclamationmark.triangle.fill", color: .orange)
                     } else {
-                        hint("Astuce : préfixez par « ; » pour éviter les déclenchements involontaires.", color: .secondary)
+                        hint("Astuce : préfixez par « ; » pour éviter les déclenchements involontaires.")
                     }
                 }
 
@@ -58,7 +58,7 @@ struct EditorView: View {
                     HStack {
                         Text("Texte").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
                         Spacer()
-                        Text("\(draft.phrase.count) car.").font(.caption2).foregroundStyle(.tertiary)
+                        Text("\(draft.phrase.count) car.").font(.caption).foregroundStyle(.secondary)
                     }
                     TextEditor(text: $draft.phrase)
                         .font(.body)
@@ -105,7 +105,14 @@ struct EditorView: View {
         }
     }
 
-    private func hint(_ text: String, color: Color) -> some View {
-        Text(text).font(.caption2).foregroundStyle(color)
+    /// La couleur ne porte que l'icône : le texte reste lisible quel que soit le fond.
+    private func hint(_ text: String, icon: String? = nil, color: Color = .secondary) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 4) {
+            if let icon {
+                Image(systemName: icon).foregroundStyle(color)
+            }
+            Text(text).foregroundStyle(icon == nil ? .secondary : .primary)
+        }
+        .font(.caption)
     }
 }
