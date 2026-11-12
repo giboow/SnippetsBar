@@ -15,6 +15,15 @@ Manage **macOS Text Replacements** from the menu bar.
 
 Requires macOS 13 (Ventura) or later.
 
+## Languages
+
+English, French, Spanish, Italian, German, Portuguese (Brazil), Japanese and
+Chinese (Simplified). The app follows the macOS language and falls back to English.
+
+Translations live in `Localization/<language>.lproj/Localizable.strings`, with the
+English text as the key. Corrections and new languages are welcome: `swift test`
+checks that every language has all the keys and the same placeholders (`%@`, `%lld`).
+
 ## Installation
 
 ### From Releases
