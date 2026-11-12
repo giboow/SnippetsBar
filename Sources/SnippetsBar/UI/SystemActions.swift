@@ -3,6 +3,9 @@ import UniformTypeIdentifiers
 
 /// Interactions avec macOS : presse-papiers, Finder, dialogues, Réglages Système.
 enum SystemActions {
+    /// Fenêtre du panneau de la barre des menus, renseignée par StatusBarController.
+    static weak var menuBarPanel: NSWindow?
+
     static func copyToPasteboard(_ string: String) {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(string, forType: .string)
@@ -14,40 +17,37 @@ enum SystemActions {
 
     /// Choix d'un fichier ; nil si annulé.
     static func chooseFile(types: [UTType]) -> URL? {
-        // App sans Dock : il faut l'activer pour que le dialogue passe au premier plan.
-        NSApp.activate(ignoringOtherApps: true)
         let panel = NSOpenPanel()
         panel.allowedContentTypes = types
         panel.allowsMultipleSelection = false
-        raiseAboveOpenWindows(panel)
-        return panel.runModal() == .OK ? panel.url : nil
+        return inFrontOfMenuBarPanel { panel.runModal() == .OK ? panel.url : nil }
     }
 
     /// Alerte modale ; renvoie l'index du bouton choisi. Échap choisit le dernier bouton.
     static func ask(_ title: String, message: String, buttons: [String]) -> Int {
-        NSApp.activate(ignoringOtherApps: true)
         let alert = NSAlert()
         alert.messageText = title
         alert.informativeText = message
         buttons.forEach { alert.addButton(withTitle: $0) }
         alert.buttons.last?.keyEquivalent = "\u{1b}"
-        alert.layout()
-        raiseAboveOpenWindows(alert.window)
-        return alert.runModal().rawValue - NSApplication.ModalResponse.alertFirstButtonReturn.rawValue
+        let response = inFrontOfMenuBarPanel { alert.runModal() }
+        return response.rawValue - NSApplication.ModalResponse.alertFirstButtonReturn.rawValue
     }
 
     static func openFullDiskAccessSettings() {
         open("x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")
     }
 
-    /// Le panneau de la barre des menus est à un niveau élevé : sans cela, les dialogues
-    /// s'ouvriraient derrière lui.
-    private static func raiseAboveOpenWindows(_ window: NSWindow) {
-        let top = NSApp.windows
-            .filter { $0.isVisible && $0 !== window }
-            .map(\.level.rawValue)
-            .max() ?? 0
-        window.level = NSWindow.Level(rawValue: max(window.level.rawValue, top + 1))
+    /// Le panneau de la barre des menus est à un niveau élevé, au-dessus des dialogues (dont le
+    /// sélecteur de fichier, affiché en partie par un autre processus) : on l'abaisse le temps du dialogue.
+    private static func inFrontOfMenuBarPanel<T>(_ runDialog: () -> T) -> T {
+        // App sans Dock : il faut l'activer pour que le dialogue passe au premier plan.
+        NSApp.activate(ignoringOtherApps: true)
+        let panel = menuBarPanel
+        let level = panel?.level
+        panel?.level = .normal
+        defer { if let level { panel?.level = level } }
+        return runDialog()
     }
 
     private static func open(_ string: String) {

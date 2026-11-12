@@ -58,6 +58,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         // App sans Dock : sans activation, les champs de saisie ne reçoivent pas le clavier.
         NSApp.activate(ignoringOtherApps: true)
         popover.contentViewController?.view.window?.makeKey()
+        SystemActions.menuBarPanel = popover.contentViewController?.view.window
         // Clic dans une autre app : fermeture. (Pas d'autorisation requise pour la souris.)
         outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
             self?.closePopover()
