@@ -1,7 +1,7 @@
 import XCTest
 @testable import SnippetsBarCore
 
-/// Tests sur une copie jetable reproduisant le schéma Core Data de macOS.
+/// Tests on a throwaway copy reproducing the macOS Core Data schema.
 final class TextReplacementsRepositoryTests: XCTestCase {
     private var dir: URL!
     var repository: TextReplacementsRepository!

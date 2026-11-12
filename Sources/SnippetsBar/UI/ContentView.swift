@@ -34,7 +34,7 @@ struct ContentView: View {
         .background(Color(nsColor: .windowBackgroundColor))
     }
 
-    // MARK: Liste
+    // MARK: List
 
     private var listScreen: some View {
         VStack(spacing: 0) {
@@ -51,9 +51,23 @@ struct ContentView: View {
     }
 
     private var header: some View {
-        HStack {
-            Label("Remplacements de texte", systemImage: "text.quote")
-                .font(.headline)
+        HStack(spacing: 10) {
+            Image(systemName: "text.quote")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 30, height: 30)
+                .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 7))
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 1) {
+                // App name: a brand, not localized.
+                Text(verbatim: "SnippetsBar")
+                    .font(.title3.weight(.bold))
+                Text("Text Replacements")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isHeader)
             Spacer()
             Button { editing = .new } label: {
                 Image(systemName: "plus")
@@ -63,9 +77,9 @@ struct ContentView: View {
                     .foregroundStyle(.white)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel("Nouveau snippet")
+            .accessibilityLabel("New Snippet")
             .keyboardShortcut("n")
-            .help("Nouveau snippet (⌘N)")
+            .help("New Snippet (⌘N)")
         }
         .padding(.horizontal, 14)
         .padding(.top, 12)
@@ -75,14 +89,14 @@ struct ContentView: View {
     private var searchField: some View {
         HStack(spacing: 6) {
             Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-            TextField("Rechercher un raccourci ou un texte", text: $query)
+            TextField("Search shortcuts or text", text: $query)
                 .textFieldStyle(.plain)
             if !query.isEmpty {
                 Button { query = "" } label: {
                     Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Effacer la recherche")
+                .accessibilityLabel("Clear Search")
             }
         }
         .padding(.horizontal, 10).padding(.vertical, 7)
@@ -101,10 +115,10 @@ struct ContentView: View {
                     .font(.system(size: 28))
                     .foregroundStyle(.secondary)
                     .accessibilityHidden(true)
-                Text(query.isEmpty ? "Aucun snippet pour l'instant" : "Aucun résultat")
+                Text(query.isEmpty ? LocalizedStringKey("No snippets yet") : LocalizedStringKey("No results"))
                     .foregroundStyle(.secondary)
                 if query.isEmpty {
-                    Button("Créer un snippet") { editing = .new }
+                    Button("Create a Snippet") { editing = .new }
                 }
                 Spacer()
             }
@@ -125,20 +139,21 @@ struct ContentView: View {
 
     private var footer: some View {
         HStack {
-            Text("\(store.snippets.count) snippet\(store.snippets.count > 1 ? "s" : "")")
+            Text("Snippets: \(store.snippets.count)")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Spacer()
             Menu {
-                Button("Exporter en .plist…") { store.exportPlist() }
-                Button("Importer un .plist…") { store.importPlist() }
+                Button("Export as .plist…") { store.exportPlist() }
+                Button("Import a .plist…") { store.importPlist() }
                 Divider()
-                Toggle("Ouvrir au démarrage", isOn: Binding(
+                Toggle("Launch at Login", isOn: Binding(
                     get: { store.launchAtLogin },
                     set: { store.setLaunchAtLogin($0) }
                 ))
                 Divider()
-                Button("Quitter SnippetsBar") { NSApplication.shared.terminate(nil) }
+                Button("Report an Issue…") { SystemActions.openIssues() }
+                Button("Quit SnippetsBar") { NSApplication.shared.terminate(nil) }
                     .keyboardShortcut("q")
             } label: {
                 Image(systemName: "ellipsis.circle")
@@ -146,8 +161,8 @@ struct ContentView: View {
             .menuStyle(.borderlessButton)
             .menuIndicator(.hidden)
             .fixedSize()
-            .help("Plus d'actions")
-            .accessibilityLabel("Plus d'actions")
+            .help("More Actions")
+            .accessibilityLabel("More Actions")
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 8)

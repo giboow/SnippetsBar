@@ -9,10 +9,10 @@ final class ImportTests: XCTestCase {
 
     func testPlanSortsAdditionsConflictsAndDuplicates() {
         let plan = ImportPlan(importing: [
-            SnippetDraft(shortcut: "omw", phrase: "On my way!"),        // doublon exact
-            SnippetDraft(shortcut: ";sig", phrase: "Bien à vous"),      // conflit
-            SnippetDraft(shortcut: " ;adr ", phrase: "1 rue de la Paix"), // ajout
-            SnippetDraft(shortcut: ";adr", phrase: "Autre adresse"),    // répété dans le fichier
+            SnippetDraft(shortcut: "omw", phrase: "On my way!"),        // exact duplicate
+            SnippetDraft(shortcut: ";sig", phrase: "Bien à vous"),      // conflict
+            SnippetDraft(shortcut: " ;adr ", phrase: "1 rue de la Paix"), // addition
+            SnippetDraft(shortcut: ";adr", phrase: "Autre adresse"),    // repeated in the file
         ], into: existing)
 
         XCTAssertEqual(plan.additions, [SnippetDraft(shortcut: ";adr", phrase: "1 rue de la Paix")])
@@ -28,14 +28,14 @@ final class ImportTests: XCTestCase {
             SnippetDraft(shortcut: ";a", phrase: "a"),
             SnippetDraft(shortcut: ";b", phrase: "b"),
         ], into: existing)
-        XCTAssertEqual(plan.summary(replacingConflicts: true), "2 importés, 1 remplacé, 1 ignoré")
-        XCTAssertEqual(plan.summary(replacingConflicts: false), "2 importés, 2 ignorés")
+        XCTAssertEqual(plan.summary(replacingConflicts: true), "Imported: 2 · Replaced: 1 · Skipped: 1")
+        XCTAssertEqual(plan.summary(replacingConflicts: false), "Imported: 2 · Skipped: 2")
     }
 
     func testNothingToImport() {
         let plan = ImportPlan(importing: [SnippetDraft(shortcut: "omw", phrase: "On my way!")], into: existing)
         XCTAssertTrue(plan.isEmpty)
-        XCTAssertEqual(plan.summary(replacingConflicts: false), "0 importé, 1 ignoré")
+        XCTAssertEqual(plan.summary(replacingConflicts: false), "Imported: 0 · Skipped: 1")
     }
 
     func testPlistRoundTripAndInvalidEntries() throws {
@@ -44,8 +44,8 @@ final class ImportTests: XCTestCase {
 
         let items: [[String: Any]] = [
             ["shortcut": ";ok", "phrase": "ok"],
-            ["shortcut": ";vide", "phrase": ""],     // texte vide
-            ["shortcut": "a b", "phrase": "espace"], // raccourci invalide
+            ["shortcut": ";vide", "phrase": ""],     // empty text
+            ["shortcut": "a b", "phrase": "espace"], // invalid shortcut
             ["phrase": "sans raccourci"],
         ]
         let data = try PropertyListSerialization.data(fromPropertyList: items, format: .xml, options: 0)
@@ -61,7 +61,7 @@ final class ImportTests: XCTestCase {
 
 extension TextReplacementsRepositoryTests {
     func testApplyImportPlan() throws {
-        // La base de test contient ;bj = « Bonjour ».
+        // The test database contains ;bj = “Bonjour”.
         let plan = ImportPlan(importing: [
             SnippetDraft(shortcut: ";bj", phrase: "Bonjour à tous"),
             SnippetDraft(shortcut: ";a", phrase: "a"),

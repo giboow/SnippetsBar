@@ -23,7 +23,7 @@ final class DomainTests: XCTestCase {
         let draft = SnippetDraft(shortcut: " ;sig ", phrase: "x")
         XCTAssertTrue(draft.isDuplicate(in: snippets, excluding: nil))
         XCTAssertFalse(draft.isDuplicate(in: snippets, excluding: 1))
-        // Un doublon reste enregistrable.
+        // A duplicate can still be saved.
         XCTAssertTrue(draft.isValid)
     }
 

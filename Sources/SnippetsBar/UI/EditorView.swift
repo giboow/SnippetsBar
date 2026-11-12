@@ -23,13 +23,13 @@ struct EditorView: View {
         VStack(spacing: 0) {
             HStack {
                 Button(action: onClose) {
-                    Label("Retour", systemImage: "chevron.left")
+                    Label("Back", systemImage: "chevron.left")
                 }
                 .buttonStyle(.plain)
                 .foregroundStyle(Color.accentColor)
                 .keyboardShortcut(.cancelAction)
                 Spacer()
-                Text(existing == nil ? "Nouveau snippet" : "Modifier")
+                Text(existing == nil ? LocalizedStringKey("New Snippet") : LocalizedStringKey("Edit Snippet"))
                     .font(.headline)
                 Spacer()
                 Color.clear.frame(width: 60, height: 1)
@@ -40,25 +40,25 @@ struct EditorView: View {
 
             VStack(alignment: .leading, spacing: 14) {
                 VStack(alignment: .leading, spacing: 5) {
-                    Text("Raccourci").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
-                    TextField("ex. ;sig", text: $draft.shortcut)
+                    Text("Shortcut").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                    TextField("e.g. ;sig", text: $draft.shortcut)
                         .textFieldStyle(.roundedBorder)
                         .font(.system(.body, design: .monospaced))
                         .focused($focus, equals: .shortcut)
                     if draft.shortcutHasWhitespace {
-                        hint("Le raccourci ne doit pas contenir d'espace.", icon: "xmark.octagon.fill", color: .red)
+                        hint("The shortcut must not contain spaces.", icon: "xmark.octagon.fill", color: .red)
                     } else if isDuplicate {
-                        hint("Ce raccourci existe déjà.", icon: "exclamationmark.triangle.fill", color: .orange)
+                        hint("This shortcut already exists.", icon: "exclamationmark.triangle.fill", color: .orange)
                     } else {
-                        hint("Astuce : préfixez par « ; » pour éviter les déclenchements involontaires.")
+                        hint("Tip: start with “;” to avoid accidental triggers.")
                     }
                 }
 
                 VStack(alignment: .leading, spacing: 5) {
                     HStack {
-                        Text("Texte").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                        Text("Text").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
                         Spacer()
-                        Text("\(draft.phrase.count) car.").font(.caption).foregroundStyle(.secondary)
+                        Text("Length: \(draft.phrase.count)").font(.caption).foregroundStyle(.secondary)
                     }
                     TextEditor(text: $draft.phrase)
                         .font(.body)
@@ -82,13 +82,13 @@ struct EditorView: View {
                             confirmDelete = true
                         }
                     } label: {
-                        Text(confirmDelete ? "Confirmer la suppression" : "Supprimer")
+                        Text(confirmDelete ? LocalizedStringKey("Confirm Deletion") : LocalizedStringKey("Delete"))
                     }
                     .foregroundStyle(.red)
                 }
                 Spacer()
-                Button("Annuler", action: onClose)
-                Button("Enregistrer") {
+                Button("Cancel", action: onClose)
+                Button("Save") {
                     if store.save(id: existing?.id, draft: draft) {
                         onClose()
                     }
@@ -105,8 +105,8 @@ struct EditorView: View {
         }
     }
 
-    /// La couleur ne porte que l'icône : le texte reste lisible quel que soit le fond.
-    private func hint(_ text: String, icon: String? = nil, color: Color = .secondary) -> some View {
+    /// Only the icon carries the color: the text stays readable on any background.
+    private func hint(_ text: LocalizedStringKey, icon: String? = nil, color: Color = .secondary) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 4) {
             if let icon {
                 Image(systemName: icon).foregroundStyle(color)

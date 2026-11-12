@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-/// Icône de la barre des menus : clic gauche = panneau des snippets, clic droit = réglages.
+/// Menu bar icon: left click = snippets panel, right click = settings.
 @MainActor
 final class StatusBarController: NSObject, NSPopoverDelegate {
     private let store: SnippetStore
@@ -13,8 +13,8 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         self.store = store
         super.init()
 
-        // Fermeture gérée ici (clic dans une autre app, changement d'app) et non par .transient :
-        // le sélecteur de fichier et les alertes de l'import ne doivent pas fermer le panneau.
+        // Closing is handled here (click in another app, app switch) rather than by .transient:
+        // the import file picker and alerts must not close the panel.
         popover.behavior = .applicationDefined
         popover.delegate = self
         NotificationCenter.default.addObserver(self, selector: #selector(closePopover),
@@ -26,7 +26,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             let image = NSImage(systemSymbolName: "text.quote", accessibilityDescription: "SnippetsBar")
             image?.isTemplate = true
             button.image = image
-            button.toolTip = "SnippetsBar — clic droit : réglages"
+            button.toolTip = String(localized: "SnippetsBar — right-click for settings")
             button.target = self
             button.action = #selector(handleClick)
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
@@ -55,19 +55,19 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         store.reload()
         store.refreshLaunchAtLogin()
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-        // App sans Dock : sans activation, les champs de saisie ne reçoivent pas le clavier.
+        // No Dock icon: without activation, text fields don't receive keyboard input.
         NSApp.activate(ignoringOtherApps: true)
         popover.contentViewController?.view.window?.makeKey()
         SystemActions.menuBarPanel = popover.contentViewController?.view.window
-        // Clic dans une autre app : fermeture. (Pas d'autorisation requise pour la souris.)
+        // Click in another app: close. (No permission needed for mouse events.)
         outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
             self?.closePopover()
         }
     }
 
     @objc private func closePopover() {
-        // Pendant un dialogue (sélecteur de fichier, alerte), le panneau reste ouvert : le sélecteur
-        // tourne en partie dans un autre processus, ses clics passent pour des clics extérieurs.
+        // During a dialog (file picker, alert) the panel stays open: the file picker partly runs
+        // in another process, so its clicks look like outside clicks.
         guard popover.isShown, NSApp.modalWindow == nil else { return }
         popover.performClose(nil)
     }
@@ -79,33 +79,34 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
 
     private func showSettingsMenu() {
         popover.performClose(nil)
-        // Menu attaché le temps d'un clic : sinon il remplacerait aussi le clic gauche.
+        // Menu attached for one click only: otherwise it would replace the left click too.
         statusItem.menu = makeSettingsMenu()
         statusItem.button?.performClick(nil)
         statusItem.menu = nil
     }
 
-    /// Mêmes actions que le menu ⋯ du panneau.
+    /// Same actions as the panel's ⋯ menu.
     private func makeSettingsMenu() -> NSMenu {
         store.refreshLaunchAtLogin()
         let menu = NSMenu()
-        menu.addItem(ActionMenuItem("Exporter en .plist…") { [store] in store.exportPlist() })
-        // Panneau ouvert ensuite pour montrer le résultat (toast et nouvelles entrées).
-        menu.addItem(ActionMenuItem("Importer un .plist…") { [weak self] in
+        menu.addItem(ActionMenuItem(String(localized: "Export as .plist…")) { [store] in store.exportPlist() })
+        // Open the panel afterwards to show the result (toast and new entries).
+        menu.addItem(ActionMenuItem(String(localized: "Import a .plist…")) { [weak self] in
             self?.store.importPlist()
             self?.showPopover()
         })
         menu.addItem(.separator())
-        let launch = ActionMenuItem("Ouvrir au démarrage") { [store] in store.setLaunchAtLogin(!store.launchAtLogin) }
+        let launch = ActionMenuItem(String(localized: "Launch at Login")) { [store] in store.setLaunchAtLogin(!store.launchAtLogin) }
         launch.state = store.launchAtLogin ? .on : .off
         menu.addItem(launch)
         menu.addItem(.separator())
-        menu.addItem(ActionMenuItem("Quitter SnippetsBar", key: "q") { NSApp.terminate(nil) })
+        menu.addItem(ActionMenuItem(String(localized: "Report an Issue…")) { SystemActions.openIssues() })
+        menu.addItem(ActionMenuItem(String(localized: "Quit SnippetsBar"), key: "q") { NSApp.terminate(nil) })
         return menu
     }
 }
 
-/// NSMenuItem qui exécute une closure.
+/// NSMenuItem that runs a closure.
 private final class ActionMenuItem: NSMenuItem {
     private let handler: () -> Void
 
@@ -115,7 +116,7 @@ private final class ActionMenuItem: NSMenuItem {
         target = self
     }
 
-    required init(coder: NSCoder) { fatalError("init(coder:) non pris en charge") }
+    required init(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
     @objc private func run() { handler() }
 }

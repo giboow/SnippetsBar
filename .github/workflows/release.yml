@@ -1,4 +1,4 @@
-# Publie une release GitHub à chaque tag vX.Y.Z :
+# Publishes a GitHub release for every vX.Y.Z tag:
 #   git tag v1.0.0 && git push origin v1.0.0
 name: Release
 
@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          fetch-depth: 0   # numéro de build = nombre de commits
+          fetch-depth: 0   # build number = commit count
 
       - name: Tests
         run: swift test
@@ -23,8 +23,8 @@ jobs:
       - name: Build
         run: ./build-app.sh "${GITHUB_REF_NAME#v}"
 
-      # Signature ad hoc pour l'instant. Avec un compte Apple Developer, ajouter ici :
-      # signature Developer ID (hardened runtime), xcrun notarytool submit --wait, xcrun stapler staple.
+      # Ad hoc signature for now. With an Apple Developer account, add here:
+      # Developer ID signing (hardened runtime), xcrun notarytool submit --wait, xcrun stapler staple.
 
       - name: Archive
         run: ditto -c -k --keepParent SnippetsBar.app "SnippetsBar-${GITHUB_REF_NAME}.zip"
