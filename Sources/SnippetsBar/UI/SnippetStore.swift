@@ -173,13 +173,21 @@ final class SnippetStore: ObservableObject {
 
     func copy(_ snippet: Snippet) {
         SystemActions.copyToPasteboard(snippet.phrase)
-        flash(String(localized: "Copied: \(snippet.shortcut)"))
+        // Show the copied text, not the shortcut, which suggested the shortcut was copied.
+        flash(String(localized: "Copied: \(Self.preview(of: snippet.phrase))"))
         onCopy?()
         lastCopiedID = snippet.id
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: 1_500_000_000)
             if lastCopiedID == snippet.id { lastCopiedID = nil }
         }
+    }
+
+    /// First line of the text, shortened for a toast.
+    static func preview(of text: String, maxLength: Int = 32) -> String {
+        let firstLine = text.split(whereSeparator: \.isNewline).first.map(String.init) ?? text
+        let trimmed = firstLine.trimmingCharacters(in: .whitespaces)
+        return trimmed.count > maxLength ? trimmed.prefix(maxLength - 1) + "…" : trimmed
     }
 
     /// Called when the panel closes: a copy confirmation or a message must not
