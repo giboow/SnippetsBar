@@ -41,6 +41,10 @@ enum SystemActions {
                                         .priority: NSAccessibilityPriorityLevel.high.rawValue])
     }
 
+    static func openIssues() {
+        open("https://github.com/giboow/SnippetsBar/issues")
+    }
+
     static func openFullDiskAccessSettings() {
         open("x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")
     }
