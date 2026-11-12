@@ -17,7 +17,7 @@ one-time Gatekeeper step.
 - **Quick pick from anywhere: ⌃⌘V** opens the list, type to filter, ↑ ↓ to select,
   ↩ to copy, then paste with ⌘V (handy in terminals, where Text Replacements don’t work).
   The shortcut can be changed in **Settings** (⋯ › Settings…, ⌘,)
-- Add (⌘N), edit, delete
+- Add (⌘N), edit, delete (right-click › Delete, with Undo or ⌘Z)
 - Duplicate shortcut detection
 - Automatic database backup before the first change
 - `.plist` export and import (same format as System Settings): on import, exact
@@ -35,6 +35,11 @@ Requires macOS 13 (Ventura) or later.
 | <img src="docs/screenshots/list-light.png" width="380" alt="SnippetsBar panel listing text replacements"> | <img src="docs/screenshots/list-dark.png" width="380" alt="SnippetsBar panel in dark mode"> |
 | **Editing a snippet** | **Importing a .plist** |
 | <img src="docs/screenshots/editor.png" width="380" alt="Editing the ;sig snippet"> | <img src="docs/screenshots/import.png" width="380" alt="Import summary: imported 2, replaced 1, skipped 1"> |
+
+<p align="center">
+  <img src="docs/screenshots/settings.png" width="460" alt="Settings window: launch at login, quick pick shortcut, version and updates"><br>
+  <em>Settings (⌘,)</em>
+</p>
 
 ## Why SnippetsBar?
 

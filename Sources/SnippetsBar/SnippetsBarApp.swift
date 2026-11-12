@@ -22,6 +22,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // No Dock icon, even when launched with `swift run`.
         NSApp.setActivationPolicy(.accessory)
         NSApp.mainMenu = Self.editMenu()
+        // Alerts and windows show the application icon; without one, macOS shows a generic
+        // icon (a folder for development builds).
+        NSApp.applicationIconImage = AppIconView.applicationIcon()
         LaunchAtLogin.enableOnFirstLaunch()
         let repository = TextReplacementsRepository(cache: GlobalPreferencesReplacementsCache())
         repository.refreshCache()

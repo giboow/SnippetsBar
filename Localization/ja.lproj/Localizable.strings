@@ -49,8 +49,11 @@
 "Tip: start with “;” to avoid accidental triggers." = "ヒント: 誤入力を防ぐには「;」で始めてください。";
 "Text" = "テキスト";
 "Length: %lld" = "文字数: %lld";
-"Confirm Deletion" = "削除を確認";
 "Delete" = "削除";
+"Deleted: %@" = "削除しました: %@";
+"Deleted: %@. Press ⌘Z to undo." = "削除しました: %@。⌘Zで取り消せます。";
+"Undo" = "取り消す";
+"Restored: %@" = "元に戻しました: %@";
 "Cancel" = "キャンセル";
 "Save" = "保存";
 "Full Disk Access…" = "フルディスクアクセス…";
@@ -64,7 +67,6 @@
 "SnippetsBar — right-click for settings" = "SnippetsBar — 右クリック: 設定";
 "Snippet added" = "スニペットを追加しました";
 "Snippet updated" = "スニペットを変更しました";
-"Snippet deleted" = "スニペットを削除しました";
 "Copied: %@" = "コピーしました: %@";
 "Invalid .plist file" = "無効な.plistファイル";
 "Nothing to import (already present: %lld)" = "読み込む項目はありません (既存: %lld)";

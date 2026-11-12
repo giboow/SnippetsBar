@@ -23,7 +23,8 @@ struct ContentView: View {
             }
 
             if let toast = store.toast {
-                ToastView(toast: toast) { store.dismissToast() }
+                ToastView(toast: toast, onDismiss: { store.dismissToast() },
+                          onAction: { store.performToastAction() })
                     .padding(.bottom, 48)
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
             }
@@ -54,11 +55,7 @@ struct ContentView: View {
 
     private var header: some View {
         HStack(spacing: 10) {
-            Image(systemName: "text.quote")
-                .font(.system(size: 15, weight: .semibold))
-                .foregroundStyle(.white)
-                .frame(width: 30, height: 30)
-                .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 7))
+            AppIconView(size: 30)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 1) {
                 HStack(alignment: .firstTextBaseline, spacing: 6) {
@@ -142,7 +139,8 @@ struct ContentView: View {
                                        isSelected: snippet.id == store.selectedID,
                                        isCopied: snippet.id == store.lastCopiedID,
                                        onCopy: { store.copy(snippet) },
-                                       onEdit: { editing = .existing(snippet) })
+                                       onEdit: { editing = .existing(snippet) },
+                                       onDelete: { store.deleteWithUndo(snippet) })
                                 .id(snippet.id)
                         }
                     }

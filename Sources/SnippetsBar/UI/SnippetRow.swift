@@ -8,6 +8,7 @@ struct SnippetRow: View {
     var isCopied = false
     let onCopy: () -> Void
     let onEdit: () -> Void
+    let onDelete: () -> Void
     @State private var hovering = false
 
     var body: some View {
@@ -46,6 +47,8 @@ struct SnippetRow: View {
         .contextMenu {
             Button("Copy Text", action: onCopy)
             Button("Edit…", action: onEdit)
+            Divider()
+            Button("Delete", role: .destructive, action: onDelete)
         }
         .animation(.easeOut(duration: 0.12), value: hovering)
         .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isCopied)
@@ -56,6 +59,7 @@ struct SnippetRow: View {
         .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
         .accessibilityAction(.default, onCopy)
         .accessibilityAction(named: "Edit", onEdit)
+        .accessibilityAction(named: "Delete", onDelete)
     }
 
     /// Keyboard selection wins over hover.

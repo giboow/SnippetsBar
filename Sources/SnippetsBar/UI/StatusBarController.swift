@@ -121,6 +121,9 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             case kVK_DownArrow: self.store.moveSelection(by: 1); return nil
             case kVK_Return, kVK_ANSI_KeypadEnter: return self.store.copySelection() ? nil : event
             case kVK_Escape:    self.closePopover(); return nil
+            case kVK_ANSI_Z where self.store.canUndoDelete
+                && event.modifierFlags.intersection([.command, .option, .control, .shift]) == .command:
+                self.store.undoDelete(); return nil
             default:            return event
             }
         }

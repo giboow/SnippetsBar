@@ -49,8 +49,11 @@
 "Tip: start with “;” to avoid accidental triggers." = "Consejo: empieza con «;» para evitar activaciones accidentales.";
 "Text" = "Texto";
 "Length: %lld" = "Longitud: %lld";
-"Confirm Deletion" = "Confirmar eliminación";
 "Delete" = "Eliminar";
+"Deleted: %@" = "Eliminado: %@";
+"Deleted: %@. Press ⌘Z to undo." = "Eliminado: %@. Pulsa ⌘Z para deshacer.";
+"Undo" = "Deshacer";
+"Restored: %@" = "Restaurado: %@";
 "Cancel" = "Cancelar";
 "Save" = "Guardar";
 "Full Disk Access…" = "Acceso total al disco…";
@@ -64,7 +67,6 @@
 "SnippetsBar — right-click for settings" = "SnippetsBar — clic secundario: ajustes";
 "Snippet added" = "Fragmento añadido";
 "Snippet updated" = "Fragmento modificado";
-"Snippet deleted" = "Fragmento eliminado";
 "Copied: %@" = "Copiado: %@";
 "Invalid .plist file" = "Archivo .plist no válido";
 "Nothing to import (already present: %lld)" = "Nada que importar (ya presentes: %lld)";
