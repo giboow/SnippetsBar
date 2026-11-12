@@ -23,7 +23,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.setActivationPolicy(.accessory)
         NSApp.mainMenu = Self.editMenu()
         LaunchAtLogin.enableOnFirstLaunch()
-        statusBar = StatusBarController(store: SnippetStore(repository: TextReplacementsRepository()))
+        let repository = TextReplacementsRepository(cache: GlobalPreferencesReplacementsCache())
+        repository.refreshCache()
+        statusBar = StatusBarController(store: SnippetStore(repository: repository))
     }
 
     /// Invisible menu (no Dock icon) but required for the editing shortcuts

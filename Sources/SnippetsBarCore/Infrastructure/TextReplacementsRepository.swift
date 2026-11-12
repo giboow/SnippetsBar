@@ -16,12 +16,23 @@ public final class TextReplacementsRepository: SnippetRepository {
     private let table = "ZTEXTREPLACEMENTENTRY"
     public let url: URL
     public let backupDirectory: URL
+    private let cache: ReplacementsCache?
     private var didBackup = false
 
+    /// `cache` is the copy apps read (see GlobalPreferencesReplacementsCache); nil leaves it untouched.
     public init(url: URL = TextReplacementsRepository.defaultURL,
-                backupDirectory: URL = TextReplacementsRepository.defaultBackupDirectory) {
+                backupDirectory: URL = TextReplacementsRepository.defaultBackupDirectory,
+                cache: ReplacementsCache? = nil) {
         self.url = url
         self.backupDirectory = backupDirectory
+        self.cache = cache
+    }
+
+    /// Rewrites the cache from the database, e.g. at launch to pick up entries
+    /// written by earlier versions.
+    public func refreshCache() {
+        guard let cache, let snippets = try? fetchAll() else { return }
+        cache.update(with: snippets)
     }
 
     // MARK: - Reading
@@ -138,7 +149,8 @@ public final class TextReplacementsRepository: SnippetRepository {
 
     // MARK: - Core Data schema
 
-    /// Automatic backup before the session's first write, then a transaction.
+    /// Automatic backup before the session's first write, then a transaction,
+    /// then a refresh of the cache apps read.
     private func write(_ body: (SQLiteConnection) throws -> Void) throws {
         if !didBackup {
             try backup()
@@ -147,6 +159,7 @@ public final class TextReplacementsRepository: SnippetRepository {
         try SQLiteConnection.open(url, readOnly: false) { db in
             try db.transaction { try body(db) }
         }
+        refreshCache()
     }
 
     /// UPDATE of one row, keeping the Core Data / iCloud metadata up to date.
