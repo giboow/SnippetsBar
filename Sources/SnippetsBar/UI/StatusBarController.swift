@@ -1,13 +1,18 @@
 import AppKit
+import Carbon.HIToolbox
 import SwiftUI
 
-/// Menu bar icon: left click = snippets panel, right click = settings.
+/// Menu bar icon: left click = snippets panel, right click = settings,
+/// ⌃⌘V from anywhere = panel ready to pick a snippet with the keyboard.
 @MainActor
 final class StatusBarController: NSObject, NSPopoverDelegate {
     private let store: SnippetStore
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     private let popover = NSPopover()
     private var outsideClickMonitor: Any?
+    private var keyMonitor: Any?
+    private var hotKey: GlobalHotKey?
+    private lazy var settings = SettingsWindowController(store: store)
 
     init(store: SnippetStore) {
         self.store = store
@@ -30,6 +35,30 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             button.target = self
             button.action = #selector(handleClick)
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+        }
+
+        store.onRequestClose = { [weak self] in self?.closePopover() }
+        store.registerShortcut = { [weak self] shortcut in
+            guard let self else { return false }
+            self.hotKey = nil   // unregisters the previous shortcut
+            guard let shortcut else { return true }
+            self.hotKey = GlobalHotKey(keyCode: shortcut.keyCode, modifiers: shortcut.carbonModifiers) { [weak self] in
+                self?.toggleFromHotKey()
+            }
+            return self.hotKey != nil
+        }
+        store.resumeShortcut()
+        store.onOpenSettings = { [weak self] in
+            self?.closePopover()
+            self?.settings.show()
+        }
+    }
+
+    private func toggleFromHotKey() {
+        if popover.isShown && NSApp.isActive {
+            closePopover()
+        } else {
+            showPopover()
         }
     }
 
@@ -54,6 +83,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         guard let button = statusItem.button, !popover.isShown else { return }
         store.reload()
         store.refreshLaunchAtLogin()
+        store.prepareQuickPick()
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         // No Dock icon: without activation, text fields don't receive keyboard input.
         NSApp.activate(ignoringOtherApps: true)
@@ -62,6 +92,18 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         // Click in another app: close. (No permission needed for mouse events.)
         outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
             self?.closePopover()
+        }
+        // Keyboard pick in the list: ↑ ↓ to select, ↩ to copy, Escape to close.
+        keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self, !self.store.isEditing,
+                  event.window === self.popover.contentViewController?.view.window else { return event }
+            switch Int(event.keyCode) {
+            case kVK_UpArrow:   self.store.moveSelection(by: -1); return nil
+            case kVK_DownArrow: self.store.moveSelection(by: 1); return nil
+            case kVK_Return, kVK_ANSI_KeypadEnter: return self.store.copySelection() ? nil : event
+            case kVK_Escape:    self.closePopover(); return nil
+            default:            return event
+            }
         }
     }
 
@@ -73,8 +115,9 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
     }
 
     func popoverDidClose(_ notification: Notification) {
-        if let outsideClickMonitor { NSEvent.removeMonitor(outsideClickMonitor) }
+        for monitor in [outsideClickMonitor, keyMonitor].compactMap({ $0 }) { NSEvent.removeMonitor(monitor) }
         outsideClickMonitor = nil
+        keyMonitor = nil
     }
 
     private func showSettingsMenu() {
@@ -96,9 +139,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             self?.showPopover()
         })
         menu.addItem(.separator())
-        let launch = ActionMenuItem(String(localized: "Launch at Login")) { [store] in store.setLaunchAtLogin(!store.launchAtLogin) }
-        launch.state = store.launchAtLogin ? .on : .off
-        menu.addItem(launch)
+        menu.addItem(ActionMenuItem(String(localized: "Settings…"), key: ",") { [store] in store.openSettings() })
         menu.addItem(.separator())
         menu.addItem(ActionMenuItem(String(localized: "SnippetsBar on GitHub")) { SystemActions.openRepository() })
         menu.addItem(ActionMenuItem(String(localized: "Report an Issue…")) { SystemActions.openIssues() })

@@ -29,7 +29,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     /// Invisible menu (no Dock icon) but required for the editing shortcuts
-    /// of text fields: ⌘Z, ⇧⌘Z, ⌘X, ⌘C, ⌘V, ⌘A.
+    /// of text fields (⌘Z, ⇧⌘Z, ⌘X, ⌘C, ⌘V, ⌘A) and ⌘W in the Settings window.
     private static func editMenu() -> NSMenu {
         let edit = NSMenu(title: "Edit")
         edit.addItem(withTitle: "Undo", action: Selector(("undo:")), keyEquivalent: "z")
@@ -40,11 +40,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         edit.addItem(withTitle: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
         edit.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
 
-        let editItem = NSMenuItem()
-        editItem.submenu = edit
+        let window = NSMenu(title: "Window")
+        window.addItem(withTitle: "Close", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
+
         let main = NSMenu()
         main.addItem(NSMenuItem())   // app menu slot, ignored by AppKit
-        main.addItem(editItem)
+        for submenu in [edit, window] {
+            let item = NSMenuItem()
+            item.submenu = submenu
+            main.addItem(item)
+        }
         return main
     }
 }
