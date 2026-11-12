@@ -35,10 +35,6 @@ struct ContentView: View {
         .animation(.easeOut(duration: 0.2), value: store.toast)
         .frame(width: 380, height: 480)
         .background(Color(nsColor: .windowBackgroundColor))
-        .onAppear {
-            store.reload()
-            store.refreshLaunchAtLogin()
-        }
     }
 
     // MARK: Liste
