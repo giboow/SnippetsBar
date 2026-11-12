@@ -10,6 +10,17 @@
 "Create a Snippet" = "スニペットを作成";
 "Snippets: %lld" = "スニペット: %lld";
 "Open from anywhere: %@" = "どこからでも開く: %@";
+"About" = "情報";
+"Version" = "バージョン";
+"Development build" = "開発版";
+"Check for Updates Automatically" = "アップデートを自動的に確認";
+"Check for Updates" = "アップデートを確認";
+"Checking…" = "確認中…";
+"SnippetsBar is up to date" = "SnippetsBarは最新です";
+"Version %@ is available" = "バージョン%@が利用可能です";
+"Download" = "ダウンロード";
+"Couldn’t check for updates" = "アップデートを確認できませんでした";
+"Update available: %@" = "アップデートあり: %@";
 "Settings…" = "設定…";
 "SnippetsBar Settings" = "SnippetsBarの設定";
 "General" = "一般";

@@ -10,6 +10,17 @@
 "Create a Snippet" = "Crear un fragmento";
 "Snippets: %lld" = "Fragmentos: %lld";
 "Open from anywhere: %@" = "Abrir desde cualquier lugar: %@";
+"About" = "Acerca de";
+"Version" = "Versión";
+"Development build" = "Versión de desarrollo";
+"Check for Updates Automatically" = "Buscar actualizaciones automáticamente";
+"Check for Updates" = "Buscar actualizaciones";
+"Checking…" = "Comprobando…";
+"SnippetsBar is up to date" = "SnippetsBar está actualizado";
+"Version %@ is available" = "La versión %@ está disponible";
+"Download" = "Descargar";
+"Couldn’t check for updates" = "No se pudieron buscar actualizaciones";
+"Update available: %@" = "Actualización disponible: %@";
 "Settings…" = "Ajustes…";
 "SnippetsBar Settings" = "Ajustes de SnippetsBar";
 "General" = "General";

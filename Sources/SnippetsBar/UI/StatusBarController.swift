@@ -52,6 +52,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             self?.closePopover()
             self?.settings.show()
         }
+        store.checkForUpdatesIfDue()
     }
 
     private func toggleFromHotKey() {
@@ -84,6 +85,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         store.reload()
         store.refreshLaunchAtLogin()
         store.prepareQuickPick()
+        store.checkForUpdatesIfDue()
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         // No Dock icon: without activation, text fields don't receive keyboard input.
         NSApp.activate(ignoringOtherApps: true)
@@ -132,6 +134,17 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
     private func makeSettingsMenu() -> NSMenu {
         store.refreshLaunchAtLogin()
         let menu = NSMenu()
+        if let version = store.currentVersion {
+            let title = NSMenuItem(title: "SnippetsBar \(version)", action: nil, keyEquivalent: "")
+            title.isEnabled = false
+            menu.addItem(title)
+        }
+        if let update = store.availableUpdate {
+            menu.addItem(ActionMenuItem(String(localized: "Update available: \(update.version.description)")) {
+                NSWorkspace.shared.open(update.url)
+            })
+        }
+        if menu.numberOfItems > 0 { menu.addItem(.separator()) }
         menu.addItem(ActionMenuItem(String(localized: "Export as .plist…")) { [store] in store.exportPlist() })
         // Open the panel afterwards to show the result (toast and new entries).
         menu.addItem(ActionMenuItem(String(localized: "Import a .plist…")) { [weak self] in

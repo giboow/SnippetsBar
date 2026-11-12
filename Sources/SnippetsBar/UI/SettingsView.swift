@@ -55,6 +55,28 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
+
+            Section("About") {
+                LabeledContent("Version") {
+                    if let label = store.versionLabel {
+                        Text(verbatim: label)
+                    } else {
+                        Text("Development build")
+                    }
+                }
+                Toggle("Check for Updates Automatically", isOn: $store.checksForUpdatesAutomatically)
+                HStack {
+                    updateStatus
+                    Spacer()
+                    if let update = store.availableUpdate {
+                        Button("Download") { NSWorkspace.shared.open(update.url) }
+                            .buttonStyle(.borderedProminent)
+                    } else {
+                        Button("Check for Updates") { store.checkForUpdates() }
+                            .disabled(store.currentVersion == nil || store.updateStatus == .checking)
+                    }
+                }
+            }
         }
         .formStyle(.grouped)
         .frame(width: 460)
@@ -78,6 +100,28 @@ struct SettingsView: View {
                 NSSound.beep()
             }
             return nil
+        }
+    }
+
+    @ViewBuilder
+    private var updateStatus: some View {
+        switch store.updateStatus {
+        case .idle:
+            EmptyView()
+        case .checking:
+            HStack(spacing: 6) {
+                ProgressView().controlSize(.small)
+                Text("Checking…").foregroundStyle(.secondary)
+            }
+        case .upToDate:
+            Label("SnippetsBar is up to date", systemImage: "checkmark.circle.fill")
+                .foregroundStyle(.secondary)
+        case .available(let release):
+            Label("Version \(release.version.description) is available", systemImage: "arrow.down.circle.fill")
+                .foregroundStyle(Color.accentColor)
+        case .failed:
+            Label("Couldn’t check for updates", systemImage: "exclamationmark.triangle.fill")
+                .foregroundStyle(.secondary)
         }
     }
 
