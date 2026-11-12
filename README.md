@@ -116,6 +116,18 @@ signature): remove SnippetsBar from the list with the “–” button, then add
 Launch at login is enabled on first launch (macOS shows “Background Items Added”).
 To turn it off: menu **⋯ › Launch at Login**, or System Settings › General › Login Items.
 
+## Where it works
+
+Expansion is done by macOS itself, not by SnippetsBar, so it works wherever macOS Text
+Replacements work: apps using the standard macOS text fields, such as Mail, Notes,
+Messages, TextEdit, Pages or Safari.
+
+It does **not** work in apps that handle text input themselves, notably terminals
+(Terminal, iTerm2, Warp, the VS Code terminal) and often code editors, Electron apps
+or some web fields in Chrome and Firefox. This is a macOS limitation.
+
+Workaround: click a snippet in SnippetsBar to copy its text, then paste it with ⌘V.
+
 ## How it works
 
 Apple provides no public API for text replacements. SnippetsBar reads and writes
