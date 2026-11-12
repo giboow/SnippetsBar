@@ -12,6 +12,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
     private var outsideClickMonitor: Any?
     private var keyMonitor: Any?
     private var hotKey: GlobalHotKey?
+    private lazy var settings = SettingsWindowController(store: store)
 
     init(store: SnippetStore) {
         self.store = store
@@ -47,6 +48,10 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             return self.hotKey != nil
         }
         store.resumeShortcut()
+        store.onOpenSettings = { [weak self] in
+            self?.closePopover()
+            self?.settings.show()
+        }
     }
 
     private func toggleFromHotKey() {
@@ -134,13 +139,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             self?.showPopover()
         })
         menu.addItem(.separator())
-        menu.addItem(ActionMenuItem(String(localized: "Quick Pick Shortcut…")) { [weak self] in
-            self?.showPopover()
-            self?.store.openShortcutSettings()
-        })
-        let launch = ActionMenuItem(String(localized: "Launch at Login")) { [store] in store.setLaunchAtLogin(!store.launchAtLogin) }
-        launch.state = store.launchAtLogin ? .on : .off
-        menu.addItem(launch)
+        menu.addItem(ActionMenuItem(String(localized: "Settings…"), key: ",") { [store] in store.openSettings() })
         menu.addItem(.separator())
         menu.addItem(ActionMenuItem(String(localized: "SnippetsBar on GitHub")) { SystemActions.openRepository() })
         menu.addItem(ActionMenuItem(String(localized: "Report an Issue…")) { SystemActions.openIssues() })

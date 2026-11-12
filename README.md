@@ -16,15 +16,15 @@ one-time Gatekeeper step.
 - Click to copy the text, double-click to edit
 - **Quick pick from anywhere: ⌃⌘V** opens the list, type to filter, ↑ ↓ to select,
   ↩ to copy, then paste with ⌘V (handy in terminals, where Text Replacements don’t work).
-  The shortcut can be changed in **⋯ › Quick Pick Shortcut…**
+  The shortcut can be changed in **Settings** (⋯ › Settings…, ⌘,)
 - Add (⌘N), edit, delete
 - Duplicate shortcut detection
 - Automatic database backup before the first change
 - `.plist` export and import (same format as System Settings): on import, exact
   duplicates are skipped and a single question is asked for existing shortcuts with a
   different text (replace or keep)
-- Launch at login (menu **⋯ › Launch at Login**)
-- Right-click the menu bar icon for settings (export, import, quick pick shortcut, launch at login, GitHub page, report an issue, quit)
+- Settings window (⌘,): launch at login and the quick pick shortcut
+- Right-click the menu bar icon for quick actions (export, import, settings, GitHub page, report an issue, quit)
 
 Requires macOS 13 (Ventura) or later.
 
@@ -117,7 +117,7 @@ If the app shows an error when opening it, add SnippetsBar to
 signature): remove SnippetsBar from the list with the “–” button, then add it again.
 
 Launch at login is enabled on first launch (macOS shows “Background Items Added”).
-To turn it off: menu **⋯ › Launch at Login**, or System Settings › General › Login Items.
+To turn it off: **⋯ › Settings… › Launch at Login**, or System Settings › General › Login Items.
 
 ## How it works
 
