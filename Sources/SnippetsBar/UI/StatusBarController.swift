@@ -61,11 +61,8 @@ final class StatusBarController: NSObject {
     private func makeSettingsMenu() -> NSMenu {
         store.refreshLaunchAtLogin()
         let menu = NSMenu()
-        menu.addItem(ActionMenuItem("Actualiser", key: "r") { [store] in store.reload() })
-        menu.addItem(.separator())
         menu.addItem(ActionMenuItem("Exporter en .plist…") { [store] in store.exportPlist() })
         menu.addItem(ActionMenuItem("Sauvegarder la base…") { [store] in store.backupNow() })
-        menu.addItem(ActionMenuItem("Ouvrir les réglages Clavier") { SystemActions.openKeyboardSettings() })
         menu.addItem(.separator())
         let launch = ActionMenuItem("Ouvrir au démarrage") { [store] in store.setLaunchAtLogin(!store.launchAtLogin) }
         launch.state = store.launchAtLogin ? .on : .off

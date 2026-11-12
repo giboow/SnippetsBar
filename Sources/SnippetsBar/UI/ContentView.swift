@@ -133,12 +133,8 @@ struct ContentView: View {
                 .foregroundStyle(.secondary)
             Spacer()
             Menu {
-                Button("Actualiser") { store.reload() }
-                    .keyboardShortcut("r")
-                Divider()
                 Button("Exporter en .plist…") { store.exportPlist() }
                 Button("Sauvegarder la base…") { store.backupNow() }
-                Button("Ouvrir les réglages Clavier") { SystemActions.openKeyboardSettings() }
                 Divider()
                 Toggle("Ouvrir au démarrage", isOn: Binding(
                     get: { store.launchAtLogin },

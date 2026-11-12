@@ -11,10 +11,6 @@ enum SystemActions {
         NSWorkspace.shared.activateFileViewerSelecting([url])
     }
 
-    static func openKeyboardSettings() {
-        open("x-apple.systempreferences:com.apple.Keyboard-Settings.extension")
-    }
-
     static func openFullDiskAccessSettings() {
         open("x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")
     }
