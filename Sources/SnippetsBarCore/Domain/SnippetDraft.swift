@@ -1,6 +1,6 @@
 import Foundation
 
-/// Saisie en cours d'un snippet (création ou modification) et ses règles de validation.
+/// Snippet being edited (new or existing) and its validation rules.
 public struct SnippetDraft: Equatable {
     public var shortcut: String
     public var phrase: String
@@ -14,7 +14,7 @@ public struct SnippetDraft: Equatable {
         self.init(shortcut: snippet.shortcut, phrase: snippet.phrase)
     }
 
-    /// Raccourci tel qu'il sera enregistré.
+    /// Shortcut as it will be saved.
     public var normalizedShortcut: String {
         shortcut.trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -23,7 +23,7 @@ public struct SnippetDraft: Equatable {
         normalizedShortcut.contains(where: \.isWhitespace)
     }
 
-    /// Un doublon n'est qu'un avertissement : il ne bloque pas l'enregistrement.
+    /// A duplicate is only a warning: it does not prevent saving.
     public var isValid: Bool {
         !normalizedShortcut.isEmpty && !phrase.isEmpty && !shortcutHasWhitespace
     }

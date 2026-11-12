@@ -9,25 +9,20 @@ struct SnippetRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            Text(snippet.shortcut)
-                .font(.system(.callout, design: .monospaced).weight(.semibold))
-                .padding(.horizontal, 7).padding(.vertical, 3)
-                .background(Color.accentColor.opacity(0.14), in: RoundedRectangle(cornerRadius: 5))
-                .foregroundStyle(Color.accentColor)
-                .lineLimit(1)
+            shortcutBadge
                 .frame(maxWidth: 130, alignment: .leading)
                 .layoutPriority(1)
 
             Text(snippet.phrase)
                 .font(.callout)
-                .foregroundStyle(.primary.opacity(0.85))
+                .foregroundStyle(.primary)
                 .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             if hovering {
                 HStack(spacing: 4) {
-                    iconButton("doc.on.doc", help: "Copier le texte", action: onCopy)
-                    iconButton("pencil", help: "Modifier", action: onEdit)
+                    iconButton("doc.on.doc", help: "Copy Text", action: onCopy)
+                    iconButton("pencil", help: "Edit", action: onEdit)
                 }
                 .transition(.opacity)
             }
@@ -41,13 +36,32 @@ struct SnippetRow: View {
         .onTapGesture(count: 1, perform: onCopy)
         .help(snippet.phrase)
         .contextMenu {
-            Button("Copier le texte", action: onCopy)
-            Button("Modifier…", action: onEdit)
+            Button("Copy Text", action: onCopy)
+            Button("Edit…", action: onEdit)
         }
         .animation(.easeOut(duration: 0.12), value: hovering)
+        // VoiceOver: one readable row; the hover buttons become actions.
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(snippet.shortcut): \(snippet.phrase)")
+        .accessibilityHint("Copies the text")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction(.default, onCopy)
+        .accessibilityAction(named: "Edit", onEdit)
     }
 
-    private func iconButton(_ name: String, help: String, action: @escaping () -> Void) -> some View {
+    /// Shortcut in the primary text color; the accent color is decoration only.
+    private var shortcutBadge: some View {
+        let shape = RoundedRectangle(cornerRadius: 5)
+        return Text(snippet.shortcut)
+            .font(.system(.callout, design: .monospaced).weight(.semibold))
+            .foregroundStyle(.primary)
+            .lineLimit(1)
+            .padding(.horizontal, 7).padding(.vertical, 3)
+            .background(Color.accentColor.opacity(0.18), in: shape)
+            .overlay(shape.strokeBorder(Color.accentColor.opacity(0.6)))
+    }
+
+    private func iconButton(_ name: String, help: LocalizedStringKey, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: name)
                 .font(.system(size: 11, weight: .medium))

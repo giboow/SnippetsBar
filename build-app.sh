@@ -1,13 +1,13 @@
 #!/bin/bash
-# Compile SnippetsBar et crée SnippetsBar.app (application de barre des menus, sans icône dans le Dock).
+# Builds SnippetsBar and creates SnippetsBar.app (menu bar app, no Dock icon).
 set -euo pipefail
 cd "$(dirname "$0")"
 
-# Version : 1er argument, sinon variable VERSION, sinon 0.0.0-dev.
+# Version: first argument, else the VERSION variable, else 0.0.0-dev.
 VERSION="${1:-${VERSION:-0.0.0-dev}}"
 BUILD="$(git rev-list --count HEAD 2>/dev/null || echo 1)"
 
-# Binaire universel (Apple Silicon + Intel).
+# Universal binary (Apple Silicon + Intel).
 SWIFT_FLAGS=(-c release --arch arm64 --arch x86_64)
 swift build "${SWIFT_FLAGS[@]}"
 
@@ -15,6 +15,7 @@ APP="SnippetsBar.app"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$(swift build "${SWIFT_FLAGS[@]}" --show-bin-path)/SnippetsBar" "$APP/Contents/MacOS/SnippetsBar"
+cp -R Localization/*.lproj "$APP/Contents/Resources/"
 
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -22,6 +23,12 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 <plist version="1.0">
 <dict>
   <key>CFBundleName</key><string>SnippetsBar</string>
+  <key>CFBundleDevelopmentRegion</key><string>en</string>
+  <key>CFBundleLocalizations</key>
+  <array>
+    <string>en</string><string>fr</string><string>es</string><string>it</string>
+    <string>de</string><string>pt-BR</string><string>ja</string><string>zh-Hans</string>
+  </array>
   <key>CFBundleDisplayName</key><string>SnippetsBar</string>
   <key>CFBundleIdentifier</key><string>local.snippetsbar</string>
   <key>CFBundleExecutable</key><string>SnippetsBar</string>
@@ -36,4 +43,4 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 PLIST
 
 codesign --force --sign - "$APP"
-echo "✅ $APP $VERSION ($BUILD) créé. Glissez-le dans /Applications puis lancez-le."
+echo "✅ $APP $VERSION ($BUILD) created. Move it to /Applications and launch it."

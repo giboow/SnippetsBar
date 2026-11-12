@@ -5,7 +5,8 @@ import SnippetsBarCore
 final class SnippetStore: ObservableObject {
     @Published private(set) var snippets: [Snippet] = []
     @Published var errorMessage: String?
-    @Published var toast: String?
+    @Published var toast: Toast?
+    @Published private(set) var launchAtLogin = LaunchAtLogin.isEnabled
 
     private let repository: SnippetRepository
 
@@ -25,7 +26,7 @@ final class SnippetStore: ObservableObject {
 
     @discardableResult
     func save(id: Int64?, draft: SnippetDraft) -> Bool {
-        perform(id == nil ? "Snippet ajouté" : "Snippet modifié") {
+        perform(id == nil ? String(localized: "Snippet added") : String(localized: "Snippet updated")) {
             if let id {
                 try repository.update(id: id, shortcut: draft.normalizedShortcut, phrase: draft.phrase)
             } else {
@@ -36,19 +37,47 @@ final class SnippetStore: ObservableObject {
 
     @discardableResult
     func delete(_ snippet: Snippet) -> Bool {
-        perform("Snippet supprimé") { try repository.delete(id: snippet.id) }
+        perform(String(localized: "Snippet deleted")) { try repository.delete(id: snippet.id) }
     }
 
     func copy(_ snippet: Snippet) {
         SystemActions.copyToPasteboard(snippet.phrase)
-        flash("Copié : \(snippet.shortcut)")
+        flash(String(localized: "Copied: \(snippet.shortcut)"))
     }
 
-    func backupNow() {
+
+    /// Imports a .plist in the System Settings format. Exact duplicates are skipped;
+    /// for existing shortcuts with a different text, a single question covers them all.
+    func importPlist() {
+        guard let url = SystemActions.chooseFile(types: [.propertyList]) else { return }
+        reload()
+        let plan: ImportPlan
         do {
-            SystemActions.revealInFinder(try repository.backup())
+            plan = ImportPlan(importing: try PlistImporter.drafts(from: url), into: snippets)
         } catch {
-            errorMessage = error.localizedDescription
+            return flash(String(localized: "Invalid .plist file"), .error)
+        }
+        guard !plan.isEmpty else {
+            return flash(String(localized: "Nothing to import (already present: \(plan.duplicateCount))"), .info)
+        }
+
+        var replace = false
+        if !plan.conflicts.isEmpty {
+            let count = plan.conflicts.count
+            let shortcuts = plan.conflicts.prefix(5).map(\.snippet.shortcut).joined(separator: ", ")
+            let choice = SystemActions.ask(
+                String(localized: "Shortcuts already used with a different text: \(count)"),
+                message: shortcuts + (count > 5 ? "…" : ""),
+                buttons: [String(localized: "Replace"), String(localized: "Keep Current"), String(localized: "Cancel")]
+            )
+            switch choice {
+            case 0: replace = true
+            case 1: replace = false
+            default: return
+            }
+        }
+        _ = perform(plan.summary(replacingConflicts: replace)) {
+            try repository.apply(plan, replacingConflicts: replace)
         }
     }
 
@@ -57,10 +86,29 @@ final class SnippetStore: ObservableObject {
             let url = PlistExporter.defaultURL
             try PlistExporter.export(snippets, to: url)
             SystemActions.revealInFinder(url)
-            flash("Exporté dans Téléchargements")
+            flash(String(localized: "Exported to Downloads"))
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    func refreshLaunchAtLogin() {
+        launchAtLogin = LaunchAtLogin.isEnabled
+    }
+
+    func setLaunchAtLogin(_ enabled: Bool) {
+        do {
+            try LaunchAtLogin.setEnabled(enabled)
+            if LaunchAtLogin.requiresApproval {
+                LaunchAtLogin.openSystemSettings()
+                flash(String(localized: "Allow it in System Settings"), .info)
+            } else {
+                flash(enabled ? String(localized: "Launch at login enabled") : String(localized: "Launch at login disabled"))
+            }
+        } catch {
+            flash(String(localized: "Couldn’t change launch at login"), .error)
+        }
+        refreshLaunchAtLogin()
     }
 
     // MARK: -
@@ -77,11 +125,17 @@ final class SnippetStore: ObservableObject {
         }
     }
 
-    private func flash(_ message: String) {
-        toast = message
+    func dismissToast() {
+        toast = nil
+    }
+
+    private func flash(_ message: String, _ kind: Toast.Kind = .success) {
+        let toast = Toast(message: message, kind: kind)
+        self.toast = toast
+        SystemActions.announce(message)
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 1_600_000_000)
-            if toast == message { toast = nil }
+            try? await Task.sleep(nanoseconds: UInt64(toast.duration * 1_000_000_000))
+            if self.toast?.id == toast.id { self.toast = nil }
         }
     }
 }
