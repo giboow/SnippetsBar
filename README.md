@@ -14,7 +14,7 @@ Requiert macOS 13 (Ventura) ou plus récent.
 ## Installation
 
 ```bash
-git clone … && cd SnippetsBar
+git clone https://github.com/giboow/SnippetsBar.git && cd SnippetsBar
 ./build-app.sh
 mv SnippetsBar.app /Applications/
 open /Applications/SnippetsBar.app
@@ -51,3 +51,11 @@ lit et écrit directement la base SQLite (Core Data) utilisée par macOS :
 - une future version de macOS peut changer le format. En cas de souci, restaurez une
   sauvegarde, ou utilisez **⋯ › Exporter en .plist** et glissez le fichier dans
   Réglages Système › Clavier › Remplacements de texte (méthode 100 % officielle).
+
+## Licence
+
+Copyright © 2026 Philippe Gibert
+
+SnippetsBar est un logiciel libre distribué sous licence
+[GNU GPL v3](LICENSE) : vous pouvez le redistribuer et le modifier selon les
+termes de cette licence. Il est fourni sans aucune garantie.
