@@ -41,6 +41,10 @@ enum SystemActions {
                                         .priority: NSAccessibilityPriorityLevel.high.rawValue])
     }
 
+    static func openRepository() {
+        open("https://github.com/giboow/SnippetsBar")
+    }
+
     /// Opens the GitHub “new issue” form, prefilled with a short template and the
     /// app and macOS versions.
     static func openIssues() {

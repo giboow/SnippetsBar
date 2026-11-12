@@ -21,7 +21,7 @@ one-time Gatekeeper step.
   duplicates are skipped and a single question is asked for existing shortcuts with a
   different text (replace or keep)
 - Launch at login (menu **⋯ › Launch at Login**)
-- Right-click the menu bar icon for settings (export, import, launch at login, report an issue, quit)
+- Right-click the menu bar icon for settings (export, import, launch at login, GitHub page, report an issue, quit)
 
 Requires macOS 13 (Ventura) or later.
 
