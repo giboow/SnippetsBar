@@ -65,7 +65,10 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
     }
 
     @objc private func closePopover() {
-        if popover.isShown { popover.performClose(nil) }
+        // Pendant un dialogue (sélecteur de fichier, alerte), le panneau reste ouvert : le sélecteur
+        // tourne en partie dans un autre processus, ses clics passent pour des clics extérieurs.
+        guard popover.isShown, NSApp.modalWindow == nil else { return }
+        popover.performClose(nil)
     }
 
     func popoverDidClose(_ notification: Notification) {
