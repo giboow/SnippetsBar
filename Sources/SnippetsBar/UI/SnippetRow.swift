@@ -9,18 +9,13 @@ struct SnippetRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            Text(snippet.shortcut)
-                .font(.system(.callout, design: .monospaced).weight(.semibold))
-                .padding(.horizontal, 7).padding(.vertical, 3)
-                .background(Color.accentColor.opacity(0.14), in: RoundedRectangle(cornerRadius: 5))
-                .foregroundStyle(Color.accentColor)
-                .lineLimit(1)
+            shortcutBadge
                 .frame(maxWidth: 130, alignment: .leading)
                 .layoutPriority(1)
 
             Text(snippet.phrase)
                 .font(.callout)
-                .foregroundStyle(.primary.opacity(0.85))
+                .foregroundStyle(.primary)
                 .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -45,6 +40,25 @@ struct SnippetRow: View {
             Button("Modifier…", action: onEdit)
         }
         .animation(.easeOut(duration: 0.12), value: hovering)
+        // VoiceOver : une seule ligne lisible, les boutons au survol deviennent des actions.
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(snippet.shortcut) : \(snippet.phrase)")
+        .accessibilityHint("Copie le texte")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction(.default, onCopy)
+        .accessibilityAction(named: "Modifier", onEdit)
+    }
+
+    /// Raccourci en couleur de texte principale ; l'accent ne sert qu'au décor.
+    private var shortcutBadge: some View {
+        let shape = RoundedRectangle(cornerRadius: 5)
+        return Text(snippet.shortcut)
+            .font(.system(.callout, design: .monospaced).weight(.semibold))
+            .foregroundStyle(.primary)
+            .lineLimit(1)
+            .padding(.horizontal, 7).padding(.vertical, 3)
+            .background(Color.accentColor.opacity(0.18), in: shape)
+            .overlay(shape.strokeBorder(Color.accentColor.opacity(0.6)))
     }
 
     private func iconButton(_ name: String, help: String, action: @escaping () -> Void) -> some View {
