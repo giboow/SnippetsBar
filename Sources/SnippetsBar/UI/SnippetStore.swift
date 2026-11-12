@@ -68,12 +68,17 @@ final class SnippetStore: ObservableObject {
 
     // MARK: Quick pick shortcut
 
-    enum ShortcutChange { case done, usedByMacOS, usedByAnotherApp }
+    enum ShortcutChange { case done, tooFewModifiers, commonInApps, usedByMacOS, usedByAnotherApp }
 
-    /// Keeps the current shortcut when the new one is used by macOS or another app.
+    /// Keeps the current shortcut when the new one would clash with apps, macOS or another app.
     @discardableResult
     func changeShortcut(to shortcut: HotKeyShortcut) -> ShortcutChange {
         guard let registerShortcut else { return .usedByAnotherApp }
+        switch ShortcutRules.problem(with: shortcut.combo) {
+        case .tooFewModifiers: return .tooFewModifiers
+        case .commonInApps: return .commonInApps
+        case nil: break
+        }
         if SystemShortcuts.contains(shortcut) {
             _ = registerShortcut(quickPickShortcut)
             return .usedByMacOS

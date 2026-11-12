@@ -18,7 +18,9 @@
 "Press the new shortcut…" = "Pressione o novo atalho…";
 "Reset to Default (%@)" = "Restaurar padrão (%@)";
 "This shortcut is used by macOS (System Settings › Keyboard › Keyboard Shortcuts)" = "Este atalho é usado pelo macOS (Ajustes do Sistema › Teclado › Atalhos de Teclado)";
-"Opens SnippetsBar from any app to pick a snippet with the keyboard. Use at least ⌘, ⌃ or ⌥. Conflicts with macOS and other global shortcuts are detected, but not with menu shortcuts inside apps." = "Abre o SnippetsBar em qualquer app para escolher um trecho pelo teclado. Use pelo menos ⌘, ⌃ ou ⌥. Conflitos com o macOS e outros atalhos globais são detectados, mas não com atalhos dos menus dos apps.";
+"Use at least two of ⌘, ⌥ and ⌃, so the shortcut doesn’t clash with app commands or typing." = "Use pelo menos duas entre ⌘, ⌥ e ⌃, para não interferir nos comandos dos apps nem na digitação.";
+"This shortcut is commonly used in apps" = "Este atalho é comumente usado nos apps";
+"Opens SnippetsBar from any app to pick a snippet with the keyboard. Conflicts with macOS, other global shortcuts and common app shortcuts are detected, but not every menu shortcut inside apps." = "Abre o SnippetsBar em qualquer app para escolher um trecho pelo teclado. São detectados conflitos com o macOS, outros atalhos globais e atalhos comuns dos apps, mas não todos os atalhos dos menus dos apps.";
 "This shortcut is already used by another app" = "Este atalho já é usado por outro app";
 "Export as .plist…" = "Exportar como .plist…";
 "Import a .plist…" = "Importar um .plist…";

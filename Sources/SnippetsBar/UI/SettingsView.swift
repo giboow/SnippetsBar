@@ -33,9 +33,7 @@ struct SettingsView: View {
                 }
                 if let conflict {
                     Label {
-                        Text(conflict == .usedByMacOS
-                             ? LocalizedStringKey("This shortcut is used by macOS (System Settings › Keyboard › Keyboard Shortcuts)")
-                             : LocalizedStringKey("This shortcut is already used by another app"))
+                        Text(message(for: conflict))
                             .fixedSize(horizontal: false, vertical: true)
                     } icon: {
                         Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
@@ -52,7 +50,7 @@ struct SettingsView: View {
             } header: {
                 Text("Quick Pick")
             } footer: {
-                Text("Opens SnippetsBar from any app to pick a snippet with the keyboard. Use at least ⌘, ⌃ or ⌥. Conflicts with macOS and other global shortcuts are detected, but not with menu shortcuts inside apps.")
+                Text("Opens SnippetsBar from any app to pick a snippet with the keyboard. Conflicts with macOS, other global shortcuts and common app shortcuts are detected, but not every menu shortcut inside apps.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -80,6 +78,19 @@ struct SettingsView: View {
                 NSSound.beep()
             }
             return nil
+        }
+    }
+
+    private func message(for conflict: SnippetStore.ShortcutChange) -> LocalizedStringKey {
+        switch conflict {
+        case .tooFewModifiers:
+            return "Use at least two of ⌘, ⌥ and ⌃, so the shortcut doesn’t clash with app commands or typing."
+        case .commonInApps:
+            return "This shortcut is commonly used in apps"
+        case .usedByMacOS:
+            return "This shortcut is used by macOS (System Settings › Keyboard › Keyboard Shortcuts)"
+        case .usedByAnotherApp, .done:
+            return "This shortcut is already used by another app"
         }
     }
 

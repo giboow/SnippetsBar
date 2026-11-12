@@ -18,7 +18,9 @@
 "Press the new shortcut…" = "Appuyez sur le nouveau raccourci…";
 "Reset to Default (%@)" = "Rétablir par défaut (%@)";
 "This shortcut is used by macOS (System Settings › Keyboard › Keyboard Shortcuts)" = "Ce raccourci est utilisé par macOS (Réglages Système › Clavier › Raccourcis clavier)";
-"Opens SnippetsBar from any app to pick a snippet with the keyboard. Use at least ⌘, ⌃ or ⌥. Conflicts with macOS and other global shortcuts are detected, but not with menu shortcuts inside apps." = "Ouvre SnippetsBar depuis n’importe quelle app pour choisir un snippet au clavier. Utilisez au moins ⌘, ⌃ ou ⌥. Les conflits avec macOS et les autres raccourcis globaux sont détectés, mais pas avec les raccourcis des menus des apps.";
+"Use at least two of ⌘, ⌥ and ⌃, so the shortcut doesn’t clash with app commands or typing." = "Utilisez au moins deux touches parmi ⌘, ⌥ et ⌃, pour ne pas gêner les commandes des apps ni la saisie.";
+"This shortcut is commonly used in apps" = "Ce raccourci est couramment utilisé dans les apps";
+"Opens SnippetsBar from any app to pick a snippet with the keyboard. Conflicts with macOS, other global shortcuts and common app shortcuts are detected, but not every menu shortcut inside apps." = "Ouvre SnippetsBar depuis n’importe quelle app pour choisir un snippet au clavier. Les conflits avec macOS, les autres raccourcis globaux et les raccourcis courants des apps sont détectés, mais pas tous les raccourcis des menus des apps.";
 "This shortcut is already used by another app" = "Ce raccourci est déjà utilisé par une autre app";
 "Export as .plist…" = "Exporter en .plist…";
 "Import a .plist…" = "Importer un .plist…";

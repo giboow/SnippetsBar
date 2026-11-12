@@ -18,7 +18,9 @@
 "Press the new shortcut…" = "新しいショートカットを押してください…";
 "Reset to Default (%@)" = "デフォルトに戻す (%@)";
 "This shortcut is used by macOS (System Settings › Keyboard › Keyboard Shortcuts)" = "このショートカットはmacOSで使用されています（システム設定 › キーボード › キーボードショートカット）";
-"Opens SnippetsBar from any app to pick a snippet with the keyboard. Use at least ⌘, ⌃ or ⌥. Conflicts with macOS and other global shortcuts are detected, but not with menu shortcuts inside apps." = "どのアプリからでもSnippetsBarを開き、キーボードでスニペットを選びます。⌘、⌃、⌥のいずれかを含めてください。macOSや他のグローバルショートカットとの競合は検出されますが、アプリのメニューのショートカットとの競合は検出されません。";
+"Use at least two of ⌘, ⌥ and ⌃, so the shortcut doesn’t clash with app commands or typing." = "アプリのコマンドや文字入力と重ならないよう、⌘、⌥、⌃のうち2つ以上を使ってください。";
+"This shortcut is commonly used in apps" = "このショートカットは多くのアプリで使われています";
+"Opens SnippetsBar from any app to pick a snippet with the keyboard. Conflicts with macOS, other global shortcuts and common app shortcuts are detected, but not every menu shortcut inside apps." = "どのアプリからでもSnippetsBarを開き、キーボードでスニペットを選びます。macOS、他のグローバルショートカット、アプリでよく使われるショートカットとの競合は検出されますが、アプリのすべてのメニューショートカットは検出できません。";
 "This shortcut is already used by another app" = "このショートカットは別のアプリで使用されています";
 "Export as .plist…" = ".plistとして書き出す…";
 "Import a .plist…" = ".plistを読み込む…";

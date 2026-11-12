@@ -18,7 +18,9 @@
 "Press the new shortcut…" = "请按下新的快捷键…";
 "Reset to Default (%@)" = "恢复默认 (%@)";
 "This shortcut is used by macOS (System Settings › Keyboard › Keyboard Shortcuts)" = "此快捷键已被 macOS 使用（系统设置 › 键盘 › 键盘快捷键）";
-"Opens SnippetsBar from any app to pick a snippet with the keyboard. Use at least ⌘, ⌃ or ⌥. Conflicts with macOS and other global shortcuts are detected, but not with menu shortcuts inside apps." = "从任意应用打开 SnippetsBar，用键盘选取片段。请至少使用 ⌘、⌃ 或 ⌥。可检测与 macOS 及其他全局快捷键的冲突，但无法检测与应用菜单快捷键的冲突。";
+"Use at least two of ⌘, ⌥ and ⌃, so the shortcut doesn’t clash with app commands or typing." = "请至少使用 ⌘、⌥、⌃ 中的两个，以免与应用命令或输入冲突。";
+"This shortcut is commonly used in apps" = "此快捷键常用于各类应用";
+"Opens SnippetsBar from any app to pick a snippet with the keyboard. Conflicts with macOS, other global shortcuts and common app shortcuts are detected, but not every menu shortcut inside apps." = "从任意应用打开 SnippetsBar，用键盘选取片段。可检测与 macOS、其他全局快捷键及常见应用快捷键的冲突，但无法检测应用菜单中的所有快捷键。";
 "This shortcut is already used by another app" = "此快捷键已被其他应用使用";
 "Export as .plist…" = "导出为 .plist…";
 "Import a .plist…" = "导入 .plist…";

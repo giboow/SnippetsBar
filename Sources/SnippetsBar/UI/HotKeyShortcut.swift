@@ -1,5 +1,6 @@
 import AppKit
 import Carbon.HIToolbox
+import SnippetsBarCore
 
 /// Keyboard shortcut of the quick pick, saved in the user defaults.
 struct HotKeyShortcut: Equatable {
@@ -16,7 +17,8 @@ struct HotKeyShortcut: Equatable {
         self.key = key
     }
 
-    /// nil when the key press cannot be a global shortcut: it needs ⌘, ⌃ or ⌥.
+    /// nil for a key pressed without ⌘, ⌥ or ⌃ (keeps recording); ShortcutRules says
+    /// whether the combination is acceptable.
     init?(event: NSEvent) {
         let modifiers = event.modifierFlags.intersection([.control, .option, .shift, .command])
         guard !modifiers.isDisjoint(with: [.control, .option, .command]) else { return nil }
@@ -31,6 +33,11 @@ struct HotKeyShortcut: Equatable {
         if modifiers.contains(.shift) { label += "⇧" }
         if modifiers.contains(.command) { label += "⌘" }
         return label + key
+    }
+
+    var combo: KeyCombo {
+        KeyCombo(keyCode: keyCode, command: modifiers.contains(.command), option: modifiers.contains(.option),
+                 control: modifiers.contains(.control), shift: modifiers.contains(.shift))
     }
 
     var carbonModifiers: Int {
