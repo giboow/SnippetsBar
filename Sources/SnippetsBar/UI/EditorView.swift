@@ -21,20 +21,7 @@ struct EditorView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
-                Button(action: onClose) {
-                    Label("Retour", systemImage: "chevron.left")
-                }
-                .buttonStyle(.plain)
-                .foregroundStyle(Color.accentColor)
-                .keyboardShortcut(.cancelAction)
-                Spacer()
-                Text(existing == nil ? "Nouveau snippet" : "Modifier")
-                    .font(.headline)
-                Spacer()
-                Color.clear.frame(width: 60, height: 1)
-            }
-            .padding(.horizontal, 14).padding(.vertical, 12)
+            EditorHeader(title: existing == nil ? "Nouveau snippet" : "Modifier", onClose: onClose)
 
             Divider()
 
@@ -46,11 +33,11 @@ struct EditorView: View {
                         .font(.system(.body, design: .monospaced))
                         .focused($focus, equals: .shortcut)
                     if draft.shortcutHasWhitespace {
-                        hint("Le raccourci ne doit pas contenir d'espace.", icon: "xmark.octagon.fill", color: .red)
+                        FormHint("Le raccourci ne doit pas contenir d'espace.", icon: "xmark.octagon.fill", color: .red)
                     } else if isDuplicate {
-                        hint("Ce raccourci existe déjà.", icon: "exclamationmark.triangle.fill", color: .orange)
+                        FormHint("Ce raccourci existe déjà.", icon: "exclamationmark.triangle.fill", color: .orange)
                     } else {
-                        hint("Astuce : préfixez par « ; » pour éviter les déclenchements involontaires.")
+                        FormHint("Astuce : préfixez par « ; » pour éviter les déclenchements involontaires.")
                     }
                 }
 
@@ -103,16 +90,5 @@ struct EditorView: View {
             draft = existing.map(SnippetDraft.init) ?? SnippetDraft()
             focus = existing == nil ? .shortcut : .phrase
         }
-    }
-
-    /// La couleur ne porte que l'icône : le texte reste lisible quel que soit le fond.
-    private func hint(_ text: String, icon: String? = nil, color: Color = .secondary) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 4) {
-            if let icon {
-                Image(systemName: icon).foregroundStyle(color)
-            }
-            Text(text).foregroundStyle(icon == nil ? .secondary : .primary)
-        }
-        .font(.caption)
     }
 }

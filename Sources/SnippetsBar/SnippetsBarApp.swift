@@ -4,7 +4,10 @@ import SnippetsBarCore
 
 @main
 struct SnippetsBarApp: App {
-    @StateObject private var store = SnippetStore(repository: TextReplacementsRepository())
+    @StateObject private var store = SnippetStore(
+        repository: TextReplacementsRepository(),
+        commandRepository: JSONCommandSnippetRepository()
+    )
 
     init() {
         // Pas d'icône dans le Dock, même lancé via `swift run`.

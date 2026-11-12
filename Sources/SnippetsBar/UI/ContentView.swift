@@ -10,12 +10,14 @@ struct ContentView: View {
     enum EditTarget: Equatable {
         case new
         case existing(Snippet)
+        case newCommand
+        case existingCommand(CommandSnippet)
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
             if let editing {
-                EditorView(target: editing) { self.editing = nil }
+                editor(for: editing)
                     .transition(.move(edge: .trailing).combined(with: .opacity))
             } else {
                 listScreen
@@ -38,6 +40,18 @@ struct ContentView: View {
         .onAppear {
             store.reload()
             store.refreshLaunchAtLogin()
+        }
+    }
+
+    @ViewBuilder
+    private func editor(for target: EditTarget) -> some View {
+        switch target {
+        case .new, .existing:
+            EditorView(target: target) { editing = nil }
+        case .newCommand:
+            CommandEditorView(existing: nil) { editing = nil }
+        case .existingCommand(let command):
+            CommandEditorView(existing: command) { editing = nil }
         }
     }
 
@@ -82,7 +96,7 @@ struct ContentView: View {
     private var searchField: some View {
         HStack(spacing: 6) {
             Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-            TextField("Rechercher un raccourci ou un texte", text: $query)
+            TextField("Rechercher un snippet ou une commande", text: $query)
                 .textFieldStyle(.plain)
             if !query.isEmpty {
                 Button { query = "" } label: {
@@ -101,21 +115,13 @@ struct ContentView: View {
     @ViewBuilder
     private var list: some View {
         let items = store.snippets.filtered(by: query)
-        if items.isEmpty {
-            VStack(spacing: 8) {
-                Spacer()
-                Image(systemName: query.isEmpty ? "text.badge.plus" : "magnifyingglass")
-                    .font(.system(size: 28))
-                    .foregroundStyle(.secondary)
-                    .accessibilityHidden(true)
-                Text(query.isEmpty ? "Aucun snippet pour l'instant" : "Aucun résultat")
-                    .foregroundStyle(.secondary)
-                if query.isEmpty {
-                    Button("Créer un snippet") { editing = .new }
-                }
-                Spacer()
+        let commands = store.commands.filtered(by: query)
+        if store.snippets.isEmpty && store.commands.isEmpty {
+            emptyState(icon: "text.badge.plus", message: "Aucun snippet pour l'instant") {
+                Button("Créer un snippet") { editing = .new }
             }
-            .frame(maxWidth: .infinity)
+        } else if !query.isEmpty && items.isEmpty && commands.isEmpty {
+            emptyState(icon: "magnifyingglass", message: "Aucun résultat") { EmptyView() }
         } else {
             ScrollView {
                 LazyVStack(spacing: 2) {
@@ -124,19 +130,73 @@ struct ContentView: View {
                                    onCopy: { store.copy(snippet) },
                                    onEdit: { editing = .existing(snippet) })
                     }
+                    if query.isEmpty || !commands.isEmpty {
+                        commandsHeader
+                        ForEach(commands) { command in
+                            CommandRow(command: command,
+                                       isRunning: store.runningCommand == command.id,
+                                       onRun: { store.run(command) },
+                                       onEdit: { editing = .existingCommand(command) })
+                        }
+                        if store.commands.isEmpty {
+                            FormHint("Exécutez une commande shell et copiez sa sortie, ex. date +%F.")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 8)
+                        }
+                    }
                 }
                 .padding(6)
             }
         }
     }
 
+    private var commandsHeader: some View {
+        HStack {
+            Text("Commandes")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+                .accessibilityAddTraits(.isHeader)
+            Spacer()
+            Button { editing = .newCommand } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 10, weight: .bold))
+                    .frame(width: 18, height: 18)
+                    .background(Color.primary.opacity(0.08), in: Circle())
+            }
+            .buttonStyle(.plain)
+            .help("Nouvelle commande (⇧⌘N)")
+            .accessibilityLabel("Nouvelle commande")
+        }
+        .padding(.horizontal, 8)
+        .padding(.top, 12)
+        .padding(.bottom, 4)
+    }
+
+    private func emptyState<Action: View>(icon: String, message: String,
+                                          @ViewBuilder action: () -> Action) -> some View {
+        VStack(spacing: 8) {
+            Spacer()
+            Image(systemName: icon)
+                .font(.system(size: 28))
+                .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
+            Text(message)
+                .foregroundStyle(.secondary)
+            action()
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+    }
+
     private var footer: some View {
         HStack {
-            Text("\(store.snippets.count) snippet\(store.snippets.count > 1 ? "s" : "")")
+            Text(countLabel)
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Spacer()
             Menu {
+                Button("Nouvelle commande…") { editing = .newCommand }
+                    .keyboardShortcut("n", modifiers: [.command, .shift])
                 Button("Actualiser") { store.reload() }
                     .keyboardShortcut("r")
                 Divider()
@@ -162,5 +222,12 @@ struct ContentView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
+    }
+
+    private var countLabel: String {
+        let snippets = store.snippets.count, commands = store.commands.count
+        var label = "\(snippets) snippet\(snippets > 1 ? "s" : "")"
+        if commands > 0 { label += " · \(commands) commande\(commands > 1 ? "s" : "")" }
+        return label
     }
 }

@@ -9,6 +9,7 @@ Gérez les **Remplacements de texte de macOS** depuis la barre des menus.
 - Sauvegarde automatique de la base avant la première modification
 - Export `.plist` (méthode officielle d'import dans Réglages Système)
 - Ouverture au démarrage (menu **⋯ › Ouvrir au démarrage**)
+- Commandes : un clic exécute une commande shell et copie sa sortie
 
 Requiert macOS 13 (Ventura) ou plus récent.
 
@@ -63,6 +64,26 @@ ajoutez-le de nouveau.
 
 Pour la lancer au démarrage : menu **⋯ › Ouvrir au démarrage**. L'app apparaît alors dans
 Réglages Système › Général › Ouverture, où vous pouvez aussi la désactiver.
+
+## Commandes
+
+En plus des remplacements de texte, SnippetsBar peut garder des **commandes shell** :
+un clic exécute la commande et copie sa sortie dans le presse-papiers. Par exemple :
+
+| Nom | Commande |
+|---|---|
+| Date du jour | `date +%F` |
+| UUID | `uuidgen \| tr A-Z a-z` |
+| Dernier commit | `git -C ~/mon-projet rev-parse --short HEAD` |
+
+- Créez-en une avec le **+** de la section « Commandes » (ou **⋯ › Nouvelle commande…**, ⇧⌘N).
+  Le bouton **Tester** de l'éditeur affiche la sortie avant d'enregistrer.
+- Les commandes sont exécutées avec `zsh` en shell de connexion (pour retrouver votre `PATH`,
+  Homebrew compris), avec un délai maximal de 5 secondes.
+- Elles sont enregistrées dans `~/Library/Application Support/SnippetsBar/commands.json`,
+  **pas** dans la base des remplacements de texte : elles ne sont pas synchronisées par iCloud
+  et ne se déclenchent pas en tapant un raccourci.
+- Elles s'exécutent avec vos droits d'utilisateur : n'ajoutez que des commandes que vous comprenez.
 
 ## Comment ça marche
 

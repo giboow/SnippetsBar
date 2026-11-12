@@ -9,7 +9,7 @@ struct SnippetRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 10) {
-            shortcutBadge
+            RowBadge(text: snippet.shortcut)
                 .frame(maxWidth: 130, alignment: .leading)
                 .layoutPriority(1)
 
@@ -21,8 +21,8 @@ struct SnippetRow: View {
 
             if hovering {
                 HStack(spacing: 4) {
-                    iconButton("doc.on.doc", help: "Copier le texte", action: onCopy)
-                    iconButton("pencil", help: "Modifier", action: onEdit)
+                    RowIconButton(systemImage: "doc.on.doc", help: "Copier le texte", action: onCopy)
+                    RowIconButton(systemImage: "pencil", help: "Modifier", action: onEdit)
                 }
                 .transition(.opacity)
             }
@@ -47,28 +47,5 @@ struct SnippetRow: View {
         .accessibilityAddTraits(.isButton)
         .accessibilityAction(.default, onCopy)
         .accessibilityAction(named: "Modifier", onEdit)
-    }
-
-    /// Raccourci en couleur de texte principale ; l'accent ne sert qu'au décor.
-    private var shortcutBadge: some View {
-        let shape = RoundedRectangle(cornerRadius: 5)
-        return Text(snippet.shortcut)
-            .font(.system(.callout, design: .monospaced).weight(.semibold))
-            .foregroundStyle(.primary)
-            .lineLimit(1)
-            .padding(.horizontal, 7).padding(.vertical, 3)
-            .background(Color.accentColor.opacity(0.18), in: shape)
-            .overlay(shape.strokeBorder(Color.accentColor.opacity(0.6)))
-    }
-
-    private func iconButton(_ name: String, help: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: name)
-                .font(.system(size: 11, weight: .medium))
-                .frame(width: 22, height: 22)
-                .background(Color.primary.opacity(0.08), in: RoundedRectangle(cornerRadius: 5))
-        }
-        .buttonStyle(.plain)
-        .help(help)
     }
 }

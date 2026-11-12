@@ -4,14 +4,18 @@ import SnippetsBarCore
 @MainActor
 final class SnippetStore: ObservableObject {
     @Published private(set) var snippets: [Snippet] = []
+    @Published private(set) var commands: [CommandSnippet] = []
+    @Published private(set) var runningCommand: CommandSnippet.ID?
     @Published var errorMessage: String?
     @Published var toast: String?
     @Published private(set) var launchAtLogin = LaunchAtLogin.isEnabled
 
     private let repository: SnippetRepository
+    private let commandRepository: CommandSnippetRepository
 
-    init(repository: SnippetRepository) {
+    init(repository: SnippetRepository, commandRepository: CommandSnippetRepository) {
         self.repository = repository
+        self.commandRepository = commandRepository
         reload()
     }
 
@@ -19,6 +23,11 @@ final class SnippetStore: ObservableObject {
         do {
             snippets = try repository.fetchAll()
             errorMessage = nil
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        do {
+            commands = try commandRepository.fetchAll().sortedByName()
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -44,6 +53,44 @@ final class SnippetStore: ObservableObject {
         SystemActions.copyToPasteboard(snippet.phrase)
         flash("Copié : \(snippet.shortcut)")
     }
+
+    // MARK: Commandes
+
+    @discardableResult
+    func saveCommand(id: CommandSnippet.ID?, draft: CommandDraft) -> Bool {
+        var all = commands
+        if let id, let index = all.firstIndex(where: { $0.id == id }) {
+            all[index].name = draft.normalizedName
+            all[index].command = draft.normalizedCommand
+        } else {
+            all.append(CommandSnippet(name: draft.normalizedName, command: draft.normalizedCommand))
+        }
+        return perform(id == nil ? "Commande ajoutée" : "Commande modifiée") {
+            try commandRepository.saveAll(all.sortedByName())
+        }
+    }
+
+    @discardableResult
+    func deleteCommand(_ command: CommandSnippet) -> Bool {
+        perform("Commande supprimée") {
+            try commandRepository.saveAll(commands.filter { $0.id != command.id })
+        }
+    }
+
+    /// Exécute la commande et copie sa sortie.
+    func run(_ command: CommandSnippet) {
+        guard runningCommand == nil else { return }
+        runningCommand = command.id
+        Task {
+            let result = await ShellCommandRunner.run(command.command)
+            runningCommand = nil
+            guard result.succeeded else { return flash(result.failureSummary) }
+            SystemActions.copyToPasteboard(result.output)
+            flash(result.output.isEmpty ? "\(command.name) : aucune sortie" : "Copié : \(command.name)")
+        }
+    }
+
+    // MARK: Fichiers
 
     func backupNow() {
         do {
