@@ -3,16 +3,18 @@ import SwiftUI
 
 /// Icône de la barre des menus : clic gauche = panneau des snippets, clic droit = réglages.
 @MainActor
-final class StatusBarController: NSObject {
+final class StatusBarController: NSObject, NSPopoverDelegate {
     private let store: SnippetStore
     private let statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     private let popover = NSPopover()
+    private var outsideClickMonitor: Any?
 
     init(store: SnippetStore) {
         self.store = store
         super.init()
 
         popover.behavior = .transient
+        popover.delegate = self
         popover.contentSize = NSSize(width: 380, height: 480)
         popover.contentViewController = NSHostingController(rootView: ContentView().environmentObject(store))
 
@@ -47,6 +49,16 @@ final class StatusBarController: NSObject {
         // App sans Dock : sans activation, les champs de saisie ne reçoivent pas le clavier.
         NSApp.activate(ignoringOtherApps: true)
         popover.contentViewController?.view.window?.makeKey()
+        // .transient ne voit pas toujours les clics dans les autres apps quand l'app n'a pas de Dock :
+        // on ferme nous-mêmes au premier clic extérieur. (Pas d'autorisation requise pour la souris.)
+        outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
+            self?.popover.performClose(nil)
+        }
+    }
+
+    func popoverDidClose(_ notification: Notification) {
+        if let outsideClickMonitor { NSEvent.removeMonitor(outsideClickMonitor) }
+        outsideClickMonitor = nil
     }
 
     private func showSettingsMenu() {
