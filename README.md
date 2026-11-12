@@ -52,6 +52,9 @@ open /Applications/SnippetsBar.app
 An app built on your own Mac is not quarantined, so there is no Gatekeeper step.
 
 To develop: `open Package.swift` in Xcode, or `swift run`. Tests: `swift test`.
+A bare `swift run` binary has no translations and shows the English UI: copy
+`Localization/*.lproj` next to the built executable (or use `./build-app.sh`) to test
+other languages.
 
 ### Publishing a release
 
