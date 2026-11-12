@@ -23,7 +23,8 @@ struct ContentView: View {
             }
 
             if let toast = store.toast {
-                ToastView(toast: toast) { store.dismissToast() }
+                ToastView(toast: toast, onDismiss: { store.dismissToast() },
+                          onAction: { store.performToastAction() })
                     .padding(.bottom, 48)
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
             }
@@ -139,7 +140,7 @@ struct ContentView: View {
                                        isCopied: snippet.id == store.lastCopiedID,
                                        onCopy: { store.copy(snippet) },
                                        onEdit: { editing = .existing(snippet) },
-                                       onDelete: { store.confirmAndDelete(snippet) })
+                                       onDelete: { store.deleteWithUndo(snippet) })
                                 .id(snippet.id)
                         }
                     }

@@ -24,15 +24,11 @@ enum SystemActions {
     }
 
     /// Modal alert; returns the index of the chosen button. Escape picks the last button.
-    /// `destructive`: index of a button that must not be triggered by Return.
-    static func ask(_ title: String, message: String, buttons: [String], destructive: Int? = nil) -> Int {
+    static func ask(_ title: String, message: String, buttons: [String]) -> Int {
         let alert = NSAlert()
         alert.messageText = title
         alert.informativeText = message
         buttons.forEach { alert.addButton(withTitle: $0) }
-        // No red "destructive" style (red on pale pink is hard to read): instead, Return
-        // doesn't trigger the dangerous button.
-        if let destructive { alert.buttons[destructive].keyEquivalent = "" }
         // NSAlert takes the icon from the bundle, not from applicationIconImage: set it explicitly.
         alert.icon = NSApp.applicationIconImage
         alert.buttons.last?.keyEquivalent = "\u{1b}"

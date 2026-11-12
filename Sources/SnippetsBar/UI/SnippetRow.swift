@@ -48,7 +48,7 @@ struct SnippetRow: View {
             Button("Copy Text", action: onCopy)
             Button("Edit…", action: onEdit)
             Divider()
-            Button("Delete…", role: .destructive, action: onDelete)
+            Button("Delete", role: .destructive, action: onDelete)
         }
         .animation(.easeOut(duration: 0.12), value: hovering)
         .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isCopied)

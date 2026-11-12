@@ -51,9 +51,10 @@
 "Length: %lld" = "文字数: %lld";
 "Confirm Deletion" = "削除を確認";
 "Delete" = "削除";
-"Delete…" = "削除…";
-"Delete “%@”?" = "「%@」を削除しますか？";
-"It will also be removed from your other devices through iCloud." = "iCloud経由で他のデバイスからも削除されます。";
+"Deleted: %@" = "削除しました: %@";
+"Deleted: %@. Press ⌘Z to undo." = "削除しました: %@。⌘Zで取り消せます。";
+"Undo" = "取り消す";
+"Restored: %@" = "元に戻しました: %@";
 "Cancel" = "キャンセル";
 "Save" = "保存";
 "Full Disk Access…" = "フルディスクアクセス…";

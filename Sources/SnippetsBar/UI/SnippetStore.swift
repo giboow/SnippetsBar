@@ -171,15 +171,38 @@ final class SnippetStore: ObservableObject {
         perform(String(localized: "Snippet deleted")) { try repository.delete(id: snippet.id) }
     }
 
-    /// Deletes after a confirmation: the deletion also syncs to the other devices.
-    func confirmAndDelete(_ snippet: Snippet) {
-        let choice = SystemActions.ask(
-            String(localized: "Delete “\(snippet.shortcut)”?"),
-            message: String(localized: "It will also be removed from your other devices through iCloud."),
-            buttons: [String(localized: "Delete"), String(localized: "Cancel")],
-            destructive: 0
-        )
-        if choice == 0 { delete(snippet) }
+    // MARK: Delete with undo
+
+    /// Last snippet deleted from the list, restorable while its toast is shown.
+    private var lastDeleted: Snippet?
+
+    var canUndoDelete: Bool { lastDeleted != nil && toast?.action == .undoDelete }
+
+    /// Deletes right away, without a confirmation dialog; the toast offers Undo (also ⌘Z).
+    func deleteWithUndo(_ snippet: Snippet) {
+        do {
+            try repository.delete(id: snippet.id)
+        } catch {
+            errorMessage = error.localizedDescription
+            return
+        }
+        reload()
+        lastDeleted = snippet
+        let preview = Self.preview(of: snippet.phrase)
+        flash(String(localized: "Deleted: \(preview)"), .info, action: .undoDelete,
+              announcement: String(localized: "Deleted: \(preview). Press ⌘Z to undo."))
+    }
+
+    func undoDelete() {
+        guard let snippet = lastDeleted else { return }
+        lastDeleted = nil
+        _ = perform(String(localized: "Restored: \(Self.preview(of: snippet.phrase))")) {
+            try repository.insert(shortcut: snippet.shortcut, phrase: snippet.phrase)
+        }
+    }
+
+    func performToastAction() {
+        if toast?.action == .undoDelete { undoDelete() }
     }
 
     func copy(_ snippet: Snippet) {
@@ -205,6 +228,7 @@ final class SnippetStore: ObservableObject {
     /// show up again the next time it opens.
     func clearTransientFeedback() {
         lastCopiedID = nil
+        lastDeleted = nil
         toast = nil
     }
 
@@ -292,13 +316,16 @@ final class SnippetStore: ObservableObject {
         toast = nil
     }
 
-    private func flash(_ message: String, _ kind: Toast.Kind = .success) {
-        let toast = Toast(message: message, kind: kind)
+    private func flash(_ message: String, _ kind: Toast.Kind = .success,
+                       action: Toast.Action? = nil, announcement: String? = nil) {
+        let toast = Toast(message: message, kind: kind, action: action)
         self.toast = toast
-        SystemActions.announce(message)
+        SystemActions.announce(announcement ?? message)
         Task { @MainActor in
             try? await Task.sleep(nanoseconds: UInt64(toast.duration * 1_000_000_000))
-            if self.toast?.id == toast.id { self.toast = nil }
+            guard self.toast?.id == toast.id else { return }
+            self.toast = nil
+            if toast.action == .undoDelete { lastDeleted = nil }
         }
     }
 }

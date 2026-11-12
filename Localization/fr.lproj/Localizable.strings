@@ -51,9 +51,10 @@
 "Length: %lld" = "Longueur : %lld";
 "Confirm Deletion" = "Confirmer la suppression";
 "Delete" = "Supprimer";
-"Delete…" = "Supprimer…";
-"Delete “%@”?" = "Supprimer « %@ » ?";
-"It will also be removed from your other devices through iCloud." = "Il sera aussi supprimé de vos autres appareils via iCloud.";
+"Deleted: %@" = "Supprimé : %@";
+"Deleted: %@. Press ⌘Z to undo." = "Supprimé : %@. Appuyez sur ⌘Z pour annuler.";
+"Undo" = "Annuler";
+"Restored: %@" = "Restauré : %@";
 "Cancel" = "Annuler";
 "Save" = "Enregistrer";
 "Full Disk Access…" = "Accès complet au disque…";

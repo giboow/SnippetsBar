@@ -51,9 +51,10 @@
 "Length: %lld" = "Comprimento: %lld";
 "Confirm Deletion" = "Confirmar exclusão";
 "Delete" = "Apagar";
-"Delete…" = "Apagar…";
-"Delete “%@”?" = "Apagar “%@”?";
-"It will also be removed from your other devices through iCloud." = "Ele também será apagado dos seus outros dispositivos pelo iCloud.";
+"Deleted: %@" = "Apagado: %@";
+"Deleted: %@. Press ⌘Z to undo." = "Apagado: %@. Pressione ⌘Z para desfazer.";
+"Undo" = "Desfazer";
+"Restored: %@" = "Restaurado: %@";
 "Cancel" = "Cancelar";
 "Save" = "Salvar";
 "Full Disk Access…" = "Acesso Total ao Disco…";

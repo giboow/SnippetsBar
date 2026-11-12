@@ -17,7 +17,7 @@ one-time Gatekeeper step.
 - **Quick pick from anywhere: ⌃⌘V** opens the list, type to filter, ↑ ↓ to select,
   ↩ to copy, then paste with ⌘V (handy in terminals, where Text Replacements don’t work).
   The shortcut can be changed in **Settings** (⋯ › Settings…, ⌘,)
-- Add (⌘N), edit, delete
+- Add (⌘N), edit, delete (right-click › Delete, with Undo or ⌘Z)
 - Duplicate shortcut detection
 - Automatic database backup before the first change
 - `.plist` export and import (same format as System Settings): on import, exact
