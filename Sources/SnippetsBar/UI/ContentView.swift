@@ -142,7 +142,8 @@ struct ContentView: View {
                                        isSelected: snippet.id == store.selectedID,
                                        isCopied: snippet.id == store.lastCopiedID,
                                        onCopy: { store.copy(snippet) },
-                                       onEdit: { editing = .existing(snippet) })
+                                       onEdit: { editing = .existing(snippet) },
+                                       onDelete: { store.confirmAndDelete(snippet) })
                                 .id(snippet.id)
                         }
                     }

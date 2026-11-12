@@ -171,6 +171,17 @@ final class SnippetStore: ObservableObject {
         perform(String(localized: "Snippet deleted")) { try repository.delete(id: snippet.id) }
     }
 
+    /// Deletes after a confirmation: the deletion also syncs to the other devices.
+    func confirmAndDelete(_ snippet: Snippet) {
+        let choice = SystemActions.ask(
+            String(localized: "Delete “\(snippet.shortcut)”?"),
+            message: String(localized: "It will also be removed from your other devices through iCloud."),
+            buttons: [String(localized: "Delete"), String(localized: "Cancel")],
+            destructive: 0
+        )
+        if choice == 0 { delete(snippet) }
+    }
+
     func copy(_ snippet: Snippet) {
         SystemActions.copyToPasteboard(snippet.phrase)
         // Show the copied text, not the shortcut, which suggested the shortcut was copied.

@@ -24,11 +24,13 @@ enum SystemActions {
     }
 
     /// Modal alert; returns the index of the chosen button. Escape picks the last button.
-    static func ask(_ title: String, message: String, buttons: [String]) -> Int {
+    /// `destructive`: index of a button shown in red.
+    static func ask(_ title: String, message: String, buttons: [String], destructive: Int? = nil) -> Int {
         let alert = NSAlert()
         alert.messageText = title
         alert.informativeText = message
         buttons.forEach { alert.addButton(withTitle: $0) }
+        if let destructive { alert.buttons[destructive].hasDestructiveAction = true }
         alert.buttons.last?.keyEquivalent = "\u{1b}"
         let response = inFrontOfMenuBarPanel { alert.runModal() }
         return response.rawValue - NSApplication.ModalResponse.alertFirstButtonReturn.rawValue

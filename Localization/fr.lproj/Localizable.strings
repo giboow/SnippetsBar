@@ -51,6 +51,9 @@
 "Length: %lld" = "Longueur : %lld";
 "Confirm Deletion" = "Confirmer la suppression";
 "Delete" = "Supprimer";
+"Delete…" = "Supprimer…";
+"Delete “%@”?" = "Supprimer « %@ » ?";
+"It will also be removed from your other devices through iCloud." = "Il sera aussi supprimé de vos autres appareils via iCloud.";
 "Cancel" = "Annuler";
 "Save" = "Enregistrer";
 "Full Disk Access…" = "Accès complet au disque…";

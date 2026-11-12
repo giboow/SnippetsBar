@@ -51,6 +51,9 @@
 "Length: %lld" = "文字数: %lld";
 "Confirm Deletion" = "削除を確認";
 "Delete" = "削除";
+"Delete…" = "削除…";
+"Delete “%@”?" = "「%@」を削除しますか？";
+"It will also be removed from your other devices through iCloud." = "iCloud経由で他のデバイスからも削除されます。";
 "Cancel" = "キャンセル";
 "Save" = "保存";
 "Full Disk Access…" = "フルディスクアクセス…";
