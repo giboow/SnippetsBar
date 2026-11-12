@@ -1,0 +1,35 @@
+# Publie une release GitHub à chaque tag vX.Y.Z :
+#   git tag v1.0.0 && git push origin v1.0.0
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # numéro de build = nombre de commits
+
+      - name: Tests
+        run: swift test
+
+      - name: Build
+        run: ./build-app.sh "${GITHUB_REF_NAME#v}"
+
+      # Signature ad hoc pour l'instant. Avec un compte Apple Developer, ajouter ici :
+      # signature Developer ID (hardened runtime), xcrun notarytool submit --wait, xcrun stapler staple.
+
+      - name: Archive
+        run: ditto -c -k --keepParent SnippetsBar.app "SnippetsBar-${GITHUB_REF_NAME}.zip"
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" "SnippetsBar-${GITHUB_REF_NAME}.zip" --generate-notes

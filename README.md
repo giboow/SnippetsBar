@@ -13,6 +13,21 @@ Requiert macOS 13 (Ventura) ou plus récent.
 
 ## Installation
 
+### Depuis les Releases
+
+1. Téléchargez `SnippetsBar-vX.Y.Z.zip` depuis la page
+   [Releases](https://github.com/giboow/SnippetsBar/releases), décompressez-le et
+   placez `SnippetsBar.app` dans `/Applications`.
+2. L'app n'est pas signée par un développeur Apple identifié : au premier lancement,
+   macOS refuse de l'ouvrir. Allez dans **Réglages Système › Confidentialité et sécurité**,
+   puis cliquez sur **Ouvrir quand même** en bas de la page.
+   Ou, dans le Terminal :
+   ```bash
+   xattr -d com.apple.quarantine /Applications/SnippetsBar.app
+   ```
+
+### Depuis les sources
+
 ```bash
 git clone https://github.com/giboow/SnippetsBar.git && cd SnippetsBar
 ./build-app.sh
@@ -21,7 +36,18 @@ open /Applications/SnippetsBar.app
 ```
 
 (Il faut Xcode ou au minimum les Command Line Tools : `xcode-select --install`.)
+Une app compilée sur votre Mac n'est pas mise en quarantaine : pas d'étape Gatekeeper.
+
 Pour développer : `open Package.swift` dans Xcode, ou `swift run`. Tests : `swift test`.
+
+### Publier une version
+
+```bash
+git tag v1.0.0 && git push origin v1.0.0
+```
+
+Le workflow GitHub Actions lance les tests, compile l'app (Apple Silicon + Intel)
+et publie le `.zip` dans une release.
 
 ### Accès complet au disque
 
@@ -29,6 +55,10 @@ La base se trouve dans `~/Library/KeyboardServices/TextReplacements.db`.
 Si l'app affiche une erreur d'ouverture, ajoutez SnippetsBar dans
 **Réglages Système › Confidentialité et sécurité › Accès complet au disque**
 (un bouton y mène directement), puis cliquez sur « Réessayer ».
+
+**Après une mise à jour**, macOS considère la nouvelle version comme une autre app
+(signature ad hoc) : retirez SnippetsBar de la liste avec le bouton « – », puis
+ajoutez-le de nouveau.
 
 Pour la lancer au démarrage : Réglages Système › Général › Ouverture.
 
