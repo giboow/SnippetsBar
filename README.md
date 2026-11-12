@@ -23,7 +23,7 @@ one-time Gatekeeper step.
 - `.plist` export and import (same format as System Settings): on import, exact
   duplicates are skipped and a single question is asked for existing shortcuts with a
   different text (replace or keep)
-- Settings window (⌘,): launch at login and the quick pick shortcut
+- Settings window (⌘,): launch at login, the quick pick shortcut, version and update check
 - Right-click the menu bar icon for quick actions (export, import, settings, GitHub page, report an issue, quit)
 
 Requires macOS 13 (Ventura) or later.
@@ -118,6 +118,17 @@ signature): remove SnippetsBar from the list with the “–” button, then add
 
 Launch at login is enabled on first launch (macOS shows “Background Items Added”).
 To turn it off: **⋯ › Settings… › Launch at Login**, or System Settings › General › Login Items.
+
+## Updates
+
+SnippetsBar checks GitHub at most once a day for a newer release. When one is available,
+the panel footer and the right-click menu show **Update available**, and
+**Settings › About** offers a **Download** button that opens the release page. The
+current version is shown next to the app name in the panel, in **Settings › About** and at
+the top of the right-click menu.
+
+Only the request to the GitHub API is sent, with no personal data. Turn it off with
+**Settings › About › Check for Updates Automatically**.
 
 ## Where it works
 

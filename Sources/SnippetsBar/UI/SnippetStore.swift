@@ -99,6 +99,50 @@ final class SnippetStore: ObservableObject {
     var onOpenSettings: (() -> Void)?
     func openSettings() { onOpenSettings?() }
 
+    // MARK: Version and updates
+
+    enum UpdateStatus: Equatable { case idle, checking, upToDate, available(Release), failed }
+
+    /// nil for development builds (version “0.0.0-dev”), which never check for updates.
+    let currentVersion = AppVersion(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "")
+    @Published private(set) var updateStatus = UpdateStatus.idle
+    @Published var checksForUpdatesAutomatically = UserDefaults.standard.object(forKey: "checkForUpdates") as? Bool ?? true {
+        didSet { UserDefaults.standard.set(checksForUpdatesAutomatically, forKey: "checkForUpdates") }
+    }
+
+    var availableUpdate: Release? {
+        if case .available(let release) = updateStatus { return release }
+        return nil
+    }
+
+    /// e.g. “1.2.0 (54)”.
+    var versionLabel: String? {
+        guard let currentVersion else { return nil }
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
+        return build.isEmpty ? currentVersion.description : "\(currentVersion) (\(build))"
+    }
+
+    func checkForUpdates() {
+        guard let currentVersion, updateStatus != .checking else { return }
+        updateStatus = .checking
+        Task {
+            do {
+                let release = try await UpdateChecker.latestRelease()
+                UserDefaults.standard.set(Date(), forKey: "lastUpdateCheck")
+                updateStatus = release.version > currentVersion ? .available(release) : .upToDate
+            } catch {
+                updateStatus = .failed
+            }
+        }
+    }
+
+    /// At most once a day, unless turned off in Settings.
+    func checkForUpdatesIfDue() {
+        guard checksForUpdatesAutomatically else { return }
+        let last = UserDefaults.standard.object(forKey: "lastUpdateCheck") as? Date ?? .distantPast
+        if Date().timeIntervalSince(last) > 24 * 60 * 60 { checkForUpdates() }
+    }
+
     private func selectFirst() {
         selectedID = visibleSnippets.first?.id
     }

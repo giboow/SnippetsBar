@@ -10,6 +10,17 @@
 "Create a Snippet" = "创建片段";
 "Snippets: %lld" = "片段：%lld";
 "Open from anywhere: %@" = "随时打开：%@";
+"About" = "关于";
+"Version" = "版本";
+"Development build" = "开发版本";
+"Check for Updates Automatically" = "自动检查更新";
+"Check for Updates" = "检查更新";
+"Checking…" = "正在检查…";
+"SnippetsBar is up to date" = "SnippetsBar 已是最新版本";
+"Version %@ is available" = "版本 %@ 可用";
+"Download" = "下载";
+"Couldn’t check for updates" = "无法检查更新";
+"Update available: %@" = "有可用更新：%@";
 "Settings…" = "设置…";
 "SnippetsBar Settings" = "SnippetsBar 设置";
 "General" = "通用";

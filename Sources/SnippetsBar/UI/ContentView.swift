@@ -61,9 +61,15 @@ struct ContentView: View {
                 .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 7))
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 1) {
-                // App name: a brand, not localized.
-                Text(verbatim: "SnippetsBar")
-                    .font(.title3.weight(.bold))
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    // App name: a brand, not localized.
+                    Text(verbatim: "SnippetsBar")
+                        .font(.title3.weight(.bold))
+                    // Development builds (swift run, Xcode, VS Code) have no version number.
+                    Text(verbatim: store.currentVersion.map { "v\($0)" } ?? "dev")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.secondary)
+                }
                 Text("Text Replacements")
                     .font(.caption)
                     .foregroundStyle(.secondary)
@@ -154,9 +160,18 @@ struct ContentView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Spacer()
-            Text("Open from anywhere: \(store.quickPickShortcut.label)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            if let update = store.availableUpdate {
+                Button { NSWorkspace.shared.open(update.url) } label: {
+                    Label("Update available: \(update.version.description)", systemImage: "arrow.down.circle.fill")
+                        .font(.caption.weight(.semibold))
+                }
+                .buttonStyle(.plain)
+                .foregroundStyle(Color.accentColor)
+            } else {
+                Text("Open from anywhere: \(store.quickPickShortcut.label)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
             Menu {
                 Button("Export as .plist…") { store.exportPlist() }
                 Button("Import a .plist…") { store.importPlist() }
