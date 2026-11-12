@@ -12,6 +12,7 @@
 "Export as .plist…" = ".plistとして書き出す…";
 "Import a .plist…" = ".plistを読み込む…";
 "Launch at Login" = "ログイン時に開く";
+"SnippetsBar on GitHub" = "GitHubのSnippetsBar";
 "Report an Issue…" = "問題を報告…";
 "Quit SnippetsBar" = "SnippetsBarを終了";
 "More Actions" = "その他の操作";

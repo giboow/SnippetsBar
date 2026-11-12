@@ -152,6 +152,7 @@ struct ContentView: View {
                     set: { store.setLaunchAtLogin($0) }
                 ))
                 Divider()
+                Button("SnippetsBar on GitHub") { SystemActions.openRepository() }
                 Button("Report an Issue…") { SystemActions.openIssues() }
                 Button("Quit SnippetsBar") { NSApplication.shared.terminate(nil) }
                     .keyboardShortcut("q")
