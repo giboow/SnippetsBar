@@ -139,11 +139,14 @@ the SQLite (Core Data) database used by macOS directly:
   syncs too.
 - **Before the first write** of each session, a copy of the database is saved to
   `~/Library/Application Support/SnippetsBar/Backups/`.
+- **After every change** (and at launch), the list is also copied to the global
+  preference `NSUserDictionaryReplacementItems`, which apps such as Mail actually read:
+  macOS does not refresh it when the database is modified directly.
 
 ⚠️ Since this is an undocumented internal format:
 
-- changes usually apply immediately, but some apps or System Settings may only see
-  them after logging out and back in;
+- apps read the list when they launch: quit and reopen an app (⌘Q) to see a new or
+  changed snippet there; System Settings may only show changes after logging out;
 - a future macOS version may change the format. If something goes wrong, restore a
   backup, or use **⋯ › Export as .plist…** and drag the file into
   System Settings › Keyboard › Text Replacements (the fully official method).
