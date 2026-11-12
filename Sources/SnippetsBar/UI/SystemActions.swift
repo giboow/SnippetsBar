@@ -41,8 +41,28 @@ enum SystemActions {
                                         .priority: NSAccessibilityPriorityLevel.high.rawValue])
     }
 
+    /// Opens the GitHub “new issue” form, prefilled with a short template and the
+    /// app and macOS versions.
     static func openIssues() {
-        open("https://github.com/giboow/SnippetsBar/issues")
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "dev"
+        let build = info?["CFBundleVersion"] as? String ?? "-"
+        let body = """
+            **What happened?**
+
+
+            **Steps to reproduce**
+            1.
+
+            **What did you expect?**
+
+
+            ---
+            SnippetsBar \(version) (\(build)) · \(ProcessInfo.processInfo.operatingSystemVersionString)
+            """
+        var components = URLComponents(string: "https://github.com/giboow/SnippetsBar/issues/new")!
+        components.queryItems = [URLQueryItem(name: "body", value: body)]
+        if let url = components.url { NSWorkspace.shared.open(url) }
     }
 
     static func openFullDiskAccessSettings() {
