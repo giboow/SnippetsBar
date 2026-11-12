@@ -1,8 +1,8 @@
 import AppKit
 import SnippetsBarCore
 
-/// Démarrage AppKit, sans scène SwiftUI : une scène (même un `Settings` vide) s'ouvrait
-/// quand l'app était activée, par exemple pour le sélecteur de fichier de l'import.
+/// AppKit entry point, without any SwiftUI scene: a scene (even an empty `Settings`) opened
+/// whenever the app was activated, e.g. for the import file picker.
 @main
 enum SnippetsBarApp {
     @MainActor
@@ -19,15 +19,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusBar: StatusBarController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Pas d'icône dans le Dock, même lancé via `swift run`.
+        // No Dock icon, even when launched with `swift run`.
         NSApp.setActivationPolicy(.accessory)
         NSApp.mainMenu = Self.editMenu()
         LaunchAtLogin.enableOnFirstLaunch()
         statusBar = StatusBarController(store: SnippetStore(repository: TextReplacementsRepository()))
     }
 
-    /// Menu invisible (app sans Dock) mais nécessaire aux raccourcis d'édition
-    /// des champs de saisie : ⌘Z, ⇧⌘Z, ⌘X, ⌘C, ⌘V, ⌘A.
+    /// Invisible menu (no Dock icon) but required for the editing shortcuts
+    /// of text fields: ⌘Z, ⇧⌘Z, ⌘X, ⌘C, ⌘V, ⌘A.
     private static func editMenu() -> NSMenu {
         let edit = NSMenu(title: "Edit")
         edit.addItem(withTitle: "Undo", action: Selector(("undo:")), keyEquivalent: "z")
@@ -41,7 +41,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let editItem = NSMenuItem()
         editItem.submenu = edit
         let main = NSMenu()
-        main.addItem(NSMenuItem())   // emplacement du menu de l'app, ignoré par AppKit
+        main.addItem(NSMenuItem())   // app menu slot, ignored by AppKit
         main.addItem(editItem)
         return main
     }

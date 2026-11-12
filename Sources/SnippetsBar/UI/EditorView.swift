@@ -105,7 +105,7 @@ struct EditorView: View {
         }
     }
 
-    /// La couleur ne porte que l'icône : le texte reste lisible quel que soit le fond.
+    /// Only the icon carries the color: the text stays readable on any background.
     private func hint(_ text: LocalizedStringKey, icon: String? = nil, color: Color = .secondary) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 4) {
             if let icon {

@@ -46,8 +46,8 @@ final class SnippetStore: ObservableObject {
     }
 
 
-    /// Importe un .plist au format des Réglages Système. Les doublons exacts sont ignorés ;
-    /// pour les raccourcis existants avec un autre texte, une seule question pour tous.
+    /// Imports a .plist in the System Settings format. Exact duplicates are skipped;
+    /// for existing shortcuts with a different text, a single question covers them all.
     func importPlist() {
         guard let url = SystemActions.chooseFile(types: [.propertyList]) else { return }
         reload()

@@ -1,7 +1,7 @@
 import Foundation
 
-/// Accès direct à ~/Library/KeyboardServices/TextReplacements.db,
-/// la base Core Data utilisée par macOS pour les remplacements de texte.
+/// Direct access to ~/Library/KeyboardServices/TextReplacements.db,
+/// the Core Data store macOS uses for text replacements.
 public final class TextReplacementsRepository: SnippetRepository {
     public static var defaultURL: URL {
         FileManager.default.homeDirectoryForCurrentUser
@@ -24,7 +24,7 @@ public final class TextReplacementsRepository: SnippetRepository {
         self.backupDirectory = backupDirectory
     }
 
-    // MARK: - Lecture
+    // MARK: - Reading
 
     public func fetchAll() throws -> [Snippet] {
         try SQLiteConnection.open(url, readOnly: true) { db in
@@ -50,7 +50,7 @@ public final class TextReplacementsRepository: SnippetRepository {
         }
     }
 
-    // MARK: - Écriture
+    // MARK: - Writing
 
     public func insert(shortcut: String, phrase: String) throws {
         try write { db in
@@ -86,7 +86,7 @@ public final class TextReplacementsRepository: SnippetRepository {
             found = true
         }
         guard found else { throw DBError.schema("TextReplacementEntry entity missing from Z_PRIMARYKEY") }
-        // Sécurité : ne jamais réutiliser un Z_PK existant.
+        // Safety: never reuse an existing Z_PK.
         try db.query("SELECT IFNULL(MAX(Z_PK), 0) FROM \(table)") { row in
             maxPK = max(maxPK, row.int64(0))
         }
@@ -110,8 +110,8 @@ public final class TextReplacementsRepository: SnippetRepository {
         try db.exec("UPDATE Z_PRIMARYKEY SET Z_MAX = ? WHERE Z_ENT = ?", [.int(pk), .int(ent)])
     }
 
-    /// Suppression « douce », comme le fait macOS, pour que la synchro iCloud
-    /// propage la suppression aux autres appareils.
+    /// “Soft” delete, as macOS does, so that iCloud sync
+    /// propagates the deletion to other devices.
     public func delete(id: Int64) throws {
         try write { db in
             let cols = try columns(db)
@@ -123,7 +123,7 @@ public final class TextReplacementsRepository: SnippetRepository {
         }
     }
 
-    /// Sauvegarde cohérente (VACUUM INTO) dans `backupDirectory`.
+    /// Consistent backup (VACUUM INTO) into `backupDirectory`.
     @discardableResult
     public func backup() throws -> URL {
         try FileManager.default.createDirectory(at: backupDirectory, withIntermediateDirectories: true)
@@ -136,9 +136,9 @@ public final class TextReplacementsRepository: SnippetRepository {
         return dest
     }
 
-    // MARK: - Schéma Core Data
+    // MARK: - Core Data schema
 
-    /// Sauvegarde automatique avant la première écriture de la session, puis transaction.
+    /// Automatic backup before the session's first write, then a transaction.
     private func write(_ body: (SQLiteConnection) throws -> Void) throws {
         if !didBackup {
             try backup()
@@ -149,7 +149,7 @@ public final class TextReplacementsRepository: SnippetRepository {
         }
     }
 
-    /// UPDATE d'une ligne en tenant à jour les métadonnées Core Data / iCloud.
+    /// UPDATE of one row, keeping the Core Data / iCloud metadata up to date.
     private func touch(_ db: SQLiteConnection, id: Int64, cols: Set<String>, setting sets: [(String, SQLValue)]) throws {
         var sets = sets
         if cols.contains("ZTIMESTAMP") { sets.append(("ZTIMESTAMP", .double(Date().timeIntervalSinceReferenceDate))) }

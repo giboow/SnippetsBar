@@ -34,7 +34,7 @@ struct ContentView: View {
         .background(Color(nsColor: .windowBackgroundColor))
     }
 
-    // MARK: Liste
+    // MARK: List
 
     private var listScreen: some View {
         VStack(spacing: 0) {

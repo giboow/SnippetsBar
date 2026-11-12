@@ -1,9 +1,9 @@
 import AppKit
 import UniformTypeIdentifiers
 
-/// Interactions avec macOS : presse-papiers, Finder, dialogues, Réglages Système.
+/// macOS interactions: pasteboard, Finder, dialogs, System Settings.
 enum SystemActions {
-    /// Fenêtre du panneau de la barre des menus, renseignée par StatusBarController.
+    /// Window of the menu bar panel, set by StatusBarController.
     static weak var menuBarPanel: NSWindow?
 
     static func copyToPasteboard(_ string: String) {
@@ -15,7 +15,7 @@ enum SystemActions {
         NSWorkspace.shared.activateFileViewerSelecting([url])
     }
 
-    /// Choix d'un fichier ; nil si annulé.
+    /// File picker; nil if cancelled.
     static func chooseFile(types: [UTType]) -> URL? {
         let panel = NSOpenPanel()
         panel.allowedContentTypes = types
@@ -23,7 +23,7 @@ enum SystemActions {
         return inFrontOfMenuBarPanel { panel.runModal() == .OK ? panel.url : nil }
     }
 
-    /// Alerte modale ; renvoie l'index du bouton choisi. Échap choisit le dernier bouton.
+    /// Modal alert; returns the index of the chosen button. Escape picks the last button.
     static func ask(_ title: String, message: String, buttons: [String]) -> Int {
         let alert = NSAlert()
         alert.messageText = title
@@ -34,7 +34,7 @@ enum SystemActions {
         return response.rawValue - NSApplication.ModalResponse.alertFirstButtonReturn.rawValue
     }
 
-    /// Lit le message avec VoiceOver (sans effet si VoiceOver est inactif).
+    /// Reads the message with VoiceOver (no effect when VoiceOver is off).
     static func announce(_ message: String) {
         NSAccessibility.post(element: NSApp as Any, notification: .announcementRequested,
                              userInfo: [.announcement: message,
@@ -45,10 +45,10 @@ enum SystemActions {
         open("x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")
     }
 
-    /// Le panneau de la barre des menus est à un niveau élevé, au-dessus des dialogues (dont le
-    /// sélecteur de fichier, affiché en partie par un autre processus) : on l'abaisse le temps du dialogue.
+    /// The menu bar panel sits at a high window level, above dialogs (including the file picker,
+    /// partly drawn by another process): it is lowered for the duration of the dialog.
     private static func inFrontOfMenuBarPanel<T>(_ runDialog: () -> T) -> T {
-        // App sans Dock : il faut l'activer pour que le dialogue passe au premier plan.
+        // No Dock icon: the app must be activated for the dialog to come to the front.
         NSApp.activate(ignoringOtherApps: true)
         let panel = menuBarPanel
         let level = panel?.level

@@ -21,7 +21,7 @@ enum SQLValue {
     case text(String), int(Int64), double(Double), null
 }
 
-/// Ligne courante d'un résultat de requête.
+/// Current row of a query result.
 struct SQLiteRow {
     fileprivate let stmt: OpaquePointer
 
@@ -35,7 +35,7 @@ struct SQLiteRow {
     }
 }
 
-/// Connexion SQLite minimale, ouverte pour la durée d'un bloc.
+/// Minimal SQLite connection, open for the duration of a block.
 final class SQLiteConnection {
     private let db: OpaquePointer
 

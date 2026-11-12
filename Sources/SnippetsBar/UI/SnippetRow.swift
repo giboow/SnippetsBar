@@ -40,7 +40,7 @@ struct SnippetRow: View {
             Button("Edit…", action: onEdit)
         }
         .animation(.easeOut(duration: 0.12), value: hovering)
-        // VoiceOver : une seule ligne lisible, les boutons au survol deviennent des actions.
+        // VoiceOver: one readable row; the hover buttons become actions.
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(snippet.shortcut): \(snippet.phrase)")
         .accessibilityHint("Copies the text")
@@ -49,7 +49,7 @@ struct SnippetRow: View {
         .accessibilityAction(named: "Edit", onEdit)
     }
 
-    /// Raccourci en couleur de texte principale ; l'accent ne sert qu'au décor.
+    /// Shortcut in the primary text color; the accent color is decoration only.
     private var shortcutBadge: some View {
         let shape = RoundedRectangle(cornerRadius: 5)
         return Text(snippet.shortcut)

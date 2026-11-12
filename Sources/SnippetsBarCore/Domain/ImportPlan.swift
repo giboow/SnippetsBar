@@ -1,12 +1,12 @@
 import Foundation
 
-/// Raccourci importé déjà présent avec un texte différent.
+/// Imported shortcut that already exists with a different text.
 public struct ImportConflict: Equatable {
     public let snippet: Snippet
     public let phrase: String
 }
 
-/// Tri des entrées d'un import : ajouts, conflits et doublons exacts (ignorés).
+/// Sorting of imported entries: additions, conflicts and exact duplicates (skipped).
 public struct ImportPlan: Equatable {
     public private(set) var additions: [SnippetDraft] = []
     public private(set) var conflicts: [ImportConflict] = []
@@ -16,7 +16,7 @@ public struct ImportPlan: Equatable {
         var seen = Set<String>()
         for draft in drafts {
             let shortcut = draft.normalizedShortcut
-            // Un même raccourci répété dans le fichier : seule la première occurrence compte.
+            // Same shortcut repeated in the file: only the first occurrence counts.
             guard seen.insert(shortcut).inserted else {
                 duplicateCount += 1
                 continue
@@ -35,7 +35,7 @@ public struct ImportPlan: Equatable {
 
     public var isEmpty: Bool { additions.isEmpty && conflicts.isEmpty }
 
-    /// Récapitulatif court, ex. « Imported: 5 · Replaced: 3 · Skipped: 2 ».
+    /// Short summary, e.g. “Imported: 5 · Replaced: 3 · Skipped: 2”.
     public func summary(replacingConflicts: Bool) -> String {
         let ignored = duplicateCount + (replacingConflicts ? 0 : conflicts.count)
         var parts = [String(localized: "Imported: \(additions.count)")]

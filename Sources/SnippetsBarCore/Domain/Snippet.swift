@@ -1,7 +1,7 @@
 import Foundation
 
 public struct Snippet: Identifiable, Hashable {
-    public let id: Int64          // Z_PK dans la base Core Data
+    public let id: Int64          // Z_PK in the Core Data store
     public var shortcut: String
     public var phrase: String
     public var modified: Date?
@@ -15,7 +15,7 @@ public struct Snippet: Identifiable, Hashable {
 }
 
 public extension Sequence where Element == Snippet {
-    /// Recherche insensible à la casse dans le raccourci et le texte.
+    /// Case-insensitive search in the shortcut and the text.
     func filtered(by query: String) -> [Snippet] {
         let q = query.trimmingCharacters(in: .whitespaces)
         guard !q.isEmpty else { return Array(self) }

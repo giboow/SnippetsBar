@@ -1,7 +1,7 @@
 import Foundation
 
-/// Méthode « officielle » : génère un .plist à glisser dans
-/// Réglages Système › Clavier › Remplacements de texte.
+/// The “official” way: generates a .plist to drag into
+/// System Settings › Keyboard › Text Replacements.
 public enum PlistExporter {
     public static var defaultURL: URL {
         FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
@@ -18,7 +18,7 @@ public enum PlistExporter {
     }
 }
 
-/// Lit un .plist au format des Réglages Système (celui produit par PlistExporter).
+/// Reads a .plist in the System Settings format (the one produced by PlistExporter).
 public enum PlistImporter {
     public static func drafts(from data: Data) throws -> [SnippetDraft] {
         let plist = try PropertyListSerialization.propertyList(from: data, format: nil)

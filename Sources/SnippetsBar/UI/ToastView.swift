@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Message de retour affiché en bas du panneau.
+/// Feedback message shown at the bottom of the panel.
 struct Toast: Equatable, Identifiable {
     enum Kind { case success, info, error }
 
@@ -8,7 +8,7 @@ struct Toast: Equatable, Identifiable {
     let message: String
     let kind: Kind
 
-    /// Les erreurs restent plus longtemps : on doit avoir le temps de les lire.
+    /// Errors stay longer: there must be time to read them.
     var duration: TimeInterval { kind == .error ? 4 : 2.5 }
 }
 
