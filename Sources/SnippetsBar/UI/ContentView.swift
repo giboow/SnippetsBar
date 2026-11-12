@@ -61,9 +61,16 @@ struct ContentView: View {
                 .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 7))
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 1) {
-                // App name: a brand, not localized.
-                Text(verbatim: "SnippetsBar")
-                    .font(.title3.weight(.bold))
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    // App name: a brand, not localized.
+                    Text(verbatim: "SnippetsBar")
+                        .font(.title3.weight(.bold))
+                    if let version = store.currentVersion {
+                        Text(verbatim: "v\(version)")
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.secondary)
+                    }
+                }
                 Text("Text Replacements")
                     .font(.caption)
                     .foregroundStyle(.secondary)
