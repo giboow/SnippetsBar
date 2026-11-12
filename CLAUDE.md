@@ -32,6 +32,9 @@ engine…) are out of scope.
 - Build: `swift build`
 - Test: `swift test`
 - App bundle: `./build-app.sh [version]` (universal binary, ad hoc signature)
+- App icon: `./scripts/generate-icon.sh` after changing `QuoteGlyph` (needs Xcode 26+;
+  the generated `Resources/Assets.car` and `Resources/AppIcon.icns` are committed). Don't use
+  SF Symbols in the app icon: their license forbids it.
 
 ## Localization
 
