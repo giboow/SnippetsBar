@@ -14,6 +14,8 @@ one-time Gatekeeper step.
 
 - Instant list and search of all your snippets
 - Click to copy the text, double-click to edit
+- **Quick pick from anywhere: ⌃⌘V** opens the list, type to filter, ↑ ↓ to select,
+  ↩ to copy, then paste with ⌘V (handy in terminals, where Text Replacements don’t work)
 - Add (⌘N), edit, delete
 - Duplicate shortcut detection
 - Automatic database backup before the first change

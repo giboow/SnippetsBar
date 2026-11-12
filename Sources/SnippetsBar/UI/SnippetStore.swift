@@ -8,6 +8,15 @@ final class SnippetStore: ObservableObject {
     @Published var toast: Toast?
     @Published private(set) var launchAtLogin = LaunchAtLogin.isEnabled
 
+    // Keyboard selection in the list (quick pick with ⌃⌘V, ↑ ↓ and ↩).
+    @Published var query = "" { didSet { selectFirst() } }
+    @Published private(set) var selectedID: Snippet.ID?
+    @Published private(set) var searchFocusRequest = 0
+    /// Set by ContentView: keys are left to the editor while it is shown.
+    var isEditing = false
+    /// Set by StatusBarController: closes the panel after a keyboard pick.
+    var onRequestClose: (() -> Void)?
+
     private let repository: SnippetRepository
 
     init(repository: SnippetRepository) {
@@ -22,6 +31,37 @@ final class SnippetStore: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+        if !visibleSnippets.contains(where: { $0.id == selectedID }) { selectFirst() }
+    }
+
+    // MARK: Quick pick
+
+    var visibleSnippets: [Snippet] { snippets.filtered(by: query) }
+
+    /// Fresh search with the first snippet selected and the search field focused.
+    func prepareQuickPick() {
+        query = ""
+        searchFocusRequest += 1
+    }
+
+    func moveSelection(by delta: Int) {
+        let items = visibleSnippets
+        guard !items.isEmpty else { return }
+        let index = items.firstIndex { $0.id == selectedID } ?? -1
+        selectedID = items[min(max(index + delta, 0), items.count - 1)].id
+    }
+
+    /// Copies the selected snippet and closes the panel; false if nothing is selected.
+    @discardableResult
+    func copySelection() -> Bool {
+        guard let snippet = visibleSnippets.first(where: { $0.id == selectedID }) else { return false }
+        copy(snippet)
+        onRequestClose?()
+        return true
+    }
+
+    private func selectFirst() {
+        selectedID = visibleSnippets.first?.id
     }
 
     @discardableResult

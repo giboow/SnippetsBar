@@ -9,6 +9,7 @@
 "No results" = "Aucun résultat";
 "Create a Snippet" = "Créer un snippet";
 "Snippets: %lld" = "Snippets : %lld";
+"Open from anywhere: ⌃⌘V" = "Ouvrir de partout : ⌃⌘V";
 "Export as .plist…" = "Exporter en .plist…";
 "Import a .plist…" = "Importer un .plist…";
 "Launch at Login" = "Ouvrir au démarrage";

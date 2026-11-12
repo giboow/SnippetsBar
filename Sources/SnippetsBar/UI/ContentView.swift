@@ -4,8 +4,8 @@ import SnippetsBarCore
 
 struct ContentView: View {
     @EnvironmentObject private var store: SnippetStore
-    @State private var query = ""
     @State private var editing: EditTarget?
+    @FocusState private var searchFocused: Bool
 
     enum EditTarget: Equatable {
         case new
@@ -32,6 +32,8 @@ struct ContentView: View {
         .animation(.easeOut(duration: 0.2), value: store.toast)
         .frame(width: 380, height: 480)
         .background(Color(nsColor: .windowBackgroundColor))
+        .onChange(of: editing) { store.isEditing = $0 != nil }
+        .onChange(of: store.searchFocusRequest) { _ in searchFocused = true }
     }
 
     // MARK: List
@@ -89,10 +91,11 @@ struct ContentView: View {
     private var searchField: some View {
         HStack(spacing: 6) {
             Image(systemName: "magnifyingglass").foregroundStyle(.secondary)
-            TextField("Search shortcuts or text", text: $query)
+            TextField("Search shortcuts or text", text: $store.query)
                 .textFieldStyle(.plain)
-            if !query.isEmpty {
-                Button { query = "" } label: {
+                .focused($searchFocused)
+            if !store.query.isEmpty {
+                Button { store.query = "" } label: {
                     Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
                 }
                 .buttonStyle(.plain)
@@ -107,7 +110,8 @@ struct ContentView: View {
 
     @ViewBuilder
     private var list: some View {
-        let items = store.snippets.filtered(by: query)
+        let items = store.visibleSnippets
+        let query = store.query
         if items.isEmpty {
             VStack(spacing: 8) {
                 Spacer()
@@ -124,15 +128,22 @@ struct ContentView: View {
             }
             .frame(maxWidth: .infinity)
         } else {
-            ScrollView {
-                LazyVStack(spacing: 2) {
-                    ForEach(items) { snippet in
-                        SnippetRow(snippet: snippet,
-                                   onCopy: { store.copy(snippet) },
-                                   onEdit: { editing = .existing(snippet) })
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(spacing: 2) {
+                        ForEach(items) { snippet in
+                            SnippetRow(snippet: snippet,
+                                       isSelected: snippet.id == store.selectedID,
+                                       onCopy: { store.copy(snippet) },
+                                       onEdit: { editing = .existing(snippet) })
+                                .id(snippet.id)
+                        }
                     }
+                    .padding(6)
                 }
-                .padding(6)
+                .onChange(of: store.selectedID) { id in
+                    if let id { proxy.scrollTo(id) }
+                }
             }
         }
     }
@@ -143,6 +154,9 @@ struct ContentView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Spacer()
+            Text("Open from anywhere: ⌃⌘V")
+                .font(.caption)
+                .foregroundStyle(.secondary)
             Menu {
                 Button("Export as .plist…") { store.exportPlist() }
                 Button("Import a .plist…") { store.importPlist() }

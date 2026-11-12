@@ -9,6 +9,7 @@
 "No results" = "无结果";
 "Create a Snippet" = "创建片段";
 "Snippets: %lld" = "片段：%lld";
+"Open from anywhere: ⌃⌘V" = "随时打开：⌃⌘V";
 "Export as .plist…" = "导出为 .plist…";
 "Import a .plist…" = "导入 .plist…";
 "Launch at Login" = "登录时打开";
