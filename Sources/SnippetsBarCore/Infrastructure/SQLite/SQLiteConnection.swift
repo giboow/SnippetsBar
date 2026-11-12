@@ -10,9 +10,9 @@ enum DBError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .open(let m):   return "Impossible d'ouvrir la base : \(m)"
-        case .query(let m):  return "Erreur SQLite : \(m)"
-        case .schema(let m): return "Format de base inattendu : \(m)"
+        case .open(let m):   return String(localized: "Cannot open the database: \(m)")
+        case .query(let m):  return String(localized: "SQLite error: \(m)")
+        case .schema(let m): return String(localized: "Unexpected database format: \(m)")
         }
     }
 }
@@ -43,7 +43,7 @@ final class SQLiteConnection {
 
     static func open<T>(_ url: URL, readOnly: Bool, _ body: (SQLiteConnection) throws -> T) throws -> T {
         guard FileManager.default.fileExists(atPath: url.path) else {
-            throw DBError.open("fichier introuvable (\(url.path))")
+            throw DBError.open(String(localized: "file not found (\(url.path))"))
         }
         var handle: OpaquePointer?
         let flags = readOnly ? SQLITE_OPEN_READONLY : SQLITE_OPEN_READWRITE

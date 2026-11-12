@@ -26,7 +26,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             let image = NSImage(systemSymbolName: "text.quote", accessibilityDescription: "SnippetsBar")
             image?.isTemplate = true
             button.image = image
-            button.toolTip = "SnippetsBar — clic droit : réglages"
+            button.toolTip = String(localized: "SnippetsBar — right-click for settings")
             button.target = self
             button.action = #selector(handleClick)
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
@@ -89,18 +89,18 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
     private func makeSettingsMenu() -> NSMenu {
         store.refreshLaunchAtLogin()
         let menu = NSMenu()
-        menu.addItem(ActionMenuItem("Exporter en .plist…") { [store] in store.exportPlist() })
+        menu.addItem(ActionMenuItem(String(localized: "Export as .plist…")) { [store] in store.exportPlist() })
         // Panneau ouvert ensuite pour montrer le résultat (toast et nouvelles entrées).
-        menu.addItem(ActionMenuItem("Importer un .plist…") { [weak self] in
+        menu.addItem(ActionMenuItem(String(localized: "Import a .plist…")) { [weak self] in
             self?.store.importPlist()
             self?.showPopover()
         })
         menu.addItem(.separator())
-        let launch = ActionMenuItem("Ouvrir au démarrage") { [store] in store.setLaunchAtLogin(!store.launchAtLogin) }
+        let launch = ActionMenuItem(String(localized: "Launch at Login")) { [store] in store.setLaunchAtLogin(!store.launchAtLogin) }
         launch.state = store.launchAtLogin ? .on : .off
         menu.addItem(launch)
         menu.addItem(.separator())
-        menu.addItem(ActionMenuItem("Quitter SnippetsBar", key: "q") { NSApp.terminate(nil) })
+        menu.addItem(ActionMenuItem(String(localized: "Quit SnippetsBar"), key: "q") { NSApp.terminate(nil) })
         return menu
     }
 }
@@ -115,7 +115,7 @@ private final class ActionMenuItem: NSMenuItem {
         target = self
     }
 
-    required init(coder: NSCoder) { fatalError("init(coder:) non pris en charge") }
+    required init(coder: NSCoder) { fatalError("init(coder:) is not supported") }
 
     @objc private func run() { handler() }
 }

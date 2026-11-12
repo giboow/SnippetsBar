@@ -15,6 +15,7 @@ APP="SnippetsBar.app"
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$(swift build "${SWIFT_FLAGS[@]}" --show-bin-path)/SnippetsBar" "$APP/Contents/MacOS/SnippetsBar"
+cp -R Localization/*.lproj "$APP/Contents/Resources/"
 
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -22,6 +23,12 @@ cat > "$APP/Contents/Info.plist" <<PLIST
 <plist version="1.0">
 <dict>
   <key>CFBundleName</key><string>SnippetsBar</string>
+  <key>CFBundleDevelopmentRegion</key><string>en</string>
+  <key>CFBundleLocalizations</key>
+  <array>
+    <string>en</string><string>fr</string><string>es</string><string>it</string>
+    <string>de</string><string>pt-BR</string><string>ja</string><string>zh-Hans</string>
+  </array>
   <key>CFBundleDisplayName</key><string>SnippetsBar</string>
   <key>CFBundleIdentifier</key><string>local.snippetsbar</string>
   <key>CFBundleExecutable</key><string>SnippetsBar</string>

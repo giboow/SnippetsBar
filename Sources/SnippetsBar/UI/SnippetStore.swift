@@ -26,7 +26,7 @@ final class SnippetStore: ObservableObject {
 
     @discardableResult
     func save(id: Int64?, draft: SnippetDraft) -> Bool {
-        perform(id == nil ? "Snippet ajouté" : "Snippet modifié") {
+        perform(id == nil ? String(localized: "Snippet added") : String(localized: "Snippet updated")) {
             if let id {
                 try repository.update(id: id, shortcut: draft.normalizedShortcut, phrase: draft.phrase)
             } else {
@@ -37,12 +37,12 @@ final class SnippetStore: ObservableObject {
 
     @discardableResult
     func delete(_ snippet: Snippet) -> Bool {
-        perform("Snippet supprimé") { try repository.delete(id: snippet.id) }
+        perform(String(localized: "Snippet deleted")) { try repository.delete(id: snippet.id) }
     }
 
     func copy(_ snippet: Snippet) {
         SystemActions.copyToPasteboard(snippet.phrase)
-        flash("Copié : \(snippet.shortcut)")
+        flash(String(localized: "Copied: \(snippet.shortcut)"))
     }
 
 
@@ -55,10 +55,10 @@ final class SnippetStore: ObservableObject {
         do {
             plan = ImportPlan(importing: try PlistImporter.drafts(from: url), into: snippets)
         } catch {
-            return flash("Fichier .plist invalide", .error)
+            return flash(String(localized: "Invalid .plist file"), .error)
         }
         guard !plan.isEmpty else {
-            return flash("Rien à importer (\(plan.duplicateCount) déjà présent\(plan.duplicateCount > 1 ? "s" : ""))", .info)
+            return flash(String(localized: "Nothing to import (already present: \(plan.duplicateCount))"), .info)
         }
 
         var replace = false
@@ -66,10 +66,9 @@ final class SnippetStore: ObservableObject {
             let count = plan.conflicts.count
             let shortcuts = plan.conflicts.prefix(5).map(\.snippet.shortcut).joined(separator: ", ")
             let choice = SystemActions.ask(
-                count > 1 ? "\(count) raccourcis existent déjà avec un texte différent"
-                          : "1 raccourci existe déjà avec un texte différent",
+                String(localized: "Shortcuts already used with a different text: \(count)"),
                 message: shortcuts + (count > 5 ? "…" : ""),
-                buttons: ["Remplacer", "Conserver les actuels", "Annuler"]
+                buttons: [String(localized: "Replace"), String(localized: "Keep Current"), String(localized: "Cancel")]
             )
             switch choice {
             case 0: replace = true
@@ -87,7 +86,7 @@ final class SnippetStore: ObservableObject {
             let url = PlistExporter.defaultURL
             try PlistExporter.export(snippets, to: url)
             SystemActions.revealInFinder(url)
-            flash("Exporté dans Téléchargements")
+            flash(String(localized: "Exported to Downloads"))
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -102,12 +101,12 @@ final class SnippetStore: ObservableObject {
             try LaunchAtLogin.setEnabled(enabled)
             if LaunchAtLogin.requiresApproval {
                 LaunchAtLogin.openSystemSettings()
-                flash("À autoriser dans Réglages Système", .info)
+                flash(String(localized: "Allow it in System Settings"), .info)
             } else {
-                flash(enabled ? "Ouverture au démarrage activée" : "Ouverture au démarrage désactivée")
+                flash(enabled ? String(localized: "Launch at login enabled") : String(localized: "Launch at login disabled"))
             }
         } catch {
-            flash("Impossible de modifier l'ouverture au démarrage", .error)
+            flash(String(localized: "Couldn’t change launch at login"), .error)
         }
         refreshLaunchAtLogin()
     }

@@ -29,14 +29,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Menu invisible (app sans Dock) mais nécessaire aux raccourcis d'édition
     /// des champs de saisie : ⌘Z, ⇧⌘Z, ⌘X, ⌘C, ⌘V, ⌘A.
     private static func editMenu() -> NSMenu {
-        let edit = NSMenu(title: "Édition")
-        edit.addItem(withTitle: "Annuler", action: Selector(("undo:")), keyEquivalent: "z")
-        edit.addItem(withTitle: "Rétablir", action: Selector(("redo:")), keyEquivalent: "Z")
+        let edit = NSMenu(title: "Edit")
+        edit.addItem(withTitle: "Undo", action: Selector(("undo:")), keyEquivalent: "z")
+        edit.addItem(withTitle: "Redo", action: Selector(("redo:")), keyEquivalent: "Z")
         edit.addItem(.separator())
-        edit.addItem(withTitle: "Couper", action: #selector(NSText.cut(_:)), keyEquivalent: "x")
-        edit.addItem(withTitle: "Copier", action: #selector(NSText.copy(_:)), keyEquivalent: "c")
-        edit.addItem(withTitle: "Coller", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
-        edit.addItem(withTitle: "Tout sélectionner", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
+        edit.addItem(withTitle: "Cut", action: #selector(NSText.cut(_:)), keyEquivalent: "x")
+        edit.addItem(withTitle: "Copy", action: #selector(NSText.copy(_:)), keyEquivalent: "c")
+        edit.addItem(withTitle: "Paste", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
+        edit.addItem(withTitle: "Select All", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
 
         let editItem = NSMenuItem()
         editItem.submenu = edit

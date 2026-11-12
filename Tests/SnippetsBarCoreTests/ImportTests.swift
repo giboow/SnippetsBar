@@ -28,14 +28,14 @@ final class ImportTests: XCTestCase {
             SnippetDraft(shortcut: ";a", phrase: "a"),
             SnippetDraft(shortcut: ";b", phrase: "b"),
         ], into: existing)
-        XCTAssertEqual(plan.summary(replacingConflicts: true), "2 importés, 1 remplacé, 1 ignoré")
-        XCTAssertEqual(plan.summary(replacingConflicts: false), "2 importés, 2 ignorés")
+        XCTAssertEqual(plan.summary(replacingConflicts: true), "Imported: 2 · Replaced: 1 · Skipped: 1")
+        XCTAssertEqual(plan.summary(replacingConflicts: false), "Imported: 2 · Skipped: 2")
     }
 
     func testNothingToImport() {
         let plan = ImportPlan(importing: [SnippetDraft(shortcut: "omw", phrase: "On my way!")], into: existing)
         XCTAssertTrue(plan.isEmpty)
-        XCTAssertEqual(plan.summary(replacingConflicts: false), "0 importé, 1 ignoré")
+        XCTAssertEqual(plan.summary(replacingConflicts: false), "Imported: 0 · Skipped: 1")
     }
 
     func testPlistRoundTripAndInvalidEntries() throws {

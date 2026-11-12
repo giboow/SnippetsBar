@@ -85,7 +85,7 @@ public final class TextReplacementsRepository: SnippetRepository {
             maxPK = row.int64(1)
             found = true
         }
-        guard found else { throw DBError.schema("entité TextReplacementEntry absente de Z_PRIMARYKEY") }
+        guard found else { throw DBError.schema("TextReplacementEntry entity missing from Z_PRIMARYKEY") }
         // Sécurité : ne jamais réutiliser un Z_PK existant.
         try db.query("SELECT IFNULL(MAX(Z_PK), 0) FROM \(table)") { row in
             maxPK = max(maxPK, row.int64(0))
@@ -165,7 +165,7 @@ public final class TextReplacementsRepository: SnippetRepository {
             cols.insert(row.string(1))
         }
         guard cols.contains("ZSHORTCUT"), cols.contains("ZPHRASE") else {
-            throw DBError.schema("colonnes ZSHORTCUT/ZPHRASE absentes")
+            throw DBError.schema("missing ZSHORTCUT/ZPHRASE columns")
         }
         return cols
     }

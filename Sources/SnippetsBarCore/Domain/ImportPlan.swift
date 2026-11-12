@@ -35,14 +35,14 @@ public struct ImportPlan: Equatable {
 
     public var isEmpty: Bool { additions.isEmpty && conflicts.isEmpty }
 
-    /// Récapitulatif court, ex. « 5 importés, 3 remplacés, 2 ignorés ».
+    /// Récapitulatif court, ex. « Imported: 5 · Replaced: 3 · Skipped: 2 ».
     public func summary(replacingConflicts: Bool) -> String {
         let ignored = duplicateCount + (replacingConflicts ? 0 : conflicts.count)
-        var parts = ["\(additions.count) importé\(additions.count > 1 ? "s" : "")"]
+        var parts = [String(localized: "Imported: \(additions.count)")]
         if replacingConflicts && !conflicts.isEmpty {
-            parts.append("\(conflicts.count) remplacé\(conflicts.count > 1 ? "s" : "")")
+            parts.append(String(localized: "Replaced: \(conflicts.count)"))
         }
-        if ignored > 0 { parts.append("\(ignored) ignoré\(ignored > 1 ? "s" : "")") }
-        return parts.joined(separator: ", ")
+        if ignored > 0 { parts.append(String(localized: "Skipped: \(ignored)")) }
+        return parts.joined(separator: " · ")
     }
 }

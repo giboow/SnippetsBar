@@ -14,8 +14,8 @@ struct ErrorBanner: View {
                 .font(.caption)
                 .fixedSize(horizontal: false, vertical: true)
             HStack {
-                Button("Accès complet au disque…") { SystemActions.openFullDiskAccessSettings() }
-                Button("Réessayer") { store.reload() }
+                Button("Full Disk Access…") { SystemActions.openFullDiskAccessSettings() }
+                Button("Retry") { store.reload() }
             }
             .controlSize(.small)
         }

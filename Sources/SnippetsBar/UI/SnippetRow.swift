@@ -21,8 +21,8 @@ struct SnippetRow: View {
 
             if hovering {
                 HStack(spacing: 4) {
-                    iconButton("doc.on.doc", help: "Copier le texte", action: onCopy)
-                    iconButton("pencil", help: "Modifier", action: onEdit)
+                    iconButton("doc.on.doc", help: "Copy Text", action: onCopy)
+                    iconButton("pencil", help: "Edit", action: onEdit)
                 }
                 .transition(.opacity)
             }
@@ -36,17 +36,17 @@ struct SnippetRow: View {
         .onTapGesture(count: 1, perform: onCopy)
         .help(snippet.phrase)
         .contextMenu {
-            Button("Copier le texte", action: onCopy)
-            Button("Modifier…", action: onEdit)
+            Button("Copy Text", action: onCopy)
+            Button("Edit…", action: onEdit)
         }
         .animation(.easeOut(duration: 0.12), value: hovering)
         // VoiceOver : une seule ligne lisible, les boutons au survol deviennent des actions.
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(snippet.shortcut) : \(snippet.phrase)")
-        .accessibilityHint("Copie le texte")
+        .accessibilityLabel("\(snippet.shortcut): \(snippet.phrase)")
+        .accessibilityHint("Copies the text")
         .accessibilityAddTraits(.isButton)
         .accessibilityAction(.default, onCopy)
-        .accessibilityAction(named: "Modifier", onEdit)
+        .accessibilityAction(named: "Edit", onEdit)
     }
 
     /// Raccourci en couleur de texte principale ; l'accent ne sert qu'au décor.
@@ -61,7 +61,7 @@ struct SnippetRow: View {
             .overlay(shape.strokeBorder(Color.accentColor.opacity(0.6)))
     }
 
-    private func iconButton(_ name: String, help: String, action: @escaping () -> Void) -> some View {
+    private func iconButton(_ name: String, help: LocalizedStringKey, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: name)
                 .font(.system(size: 11, weight: .medium))

@@ -34,7 +34,7 @@ struct ToastView: View {
         .shadow(color: .black.opacity(0.2), radius: 10, y: 3)
         .padding(.horizontal, 16)
         .onTapGesture(perform: onDismiss)
-        .help("Cliquer pour fermer")
+        .help("Click to dismiss")
         .accessibilityElement(children: .combine)
     }
 

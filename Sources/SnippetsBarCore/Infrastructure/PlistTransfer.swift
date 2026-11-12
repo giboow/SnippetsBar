@@ -22,7 +22,7 @@ public enum PlistExporter {
 public enum PlistImporter {
     public static func drafts(from data: Data) throws -> [SnippetDraft] {
         let plist = try PropertyListSerialization.propertyList(from: data, format: nil)
-        guard let items = plist as? [[String: Any]] else { throw DBError.schema("le fichier n'est pas une liste de remplacements de texte") }
+        guard let items = plist as? [[String: Any]] else { throw DBError.schema(String(localized: "the file is not a list of text replacements")) }
         return items.compactMap { item in
             guard let shortcut = item["shortcut"] as? String, let phrase = item["phrase"] as? String else { return nil }
             let draft = SnippetDraft(shortcut: shortcut, phrase: phrase)
