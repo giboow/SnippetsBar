@@ -16,6 +16,14 @@ alternative to aText and TextExpander for everyday snippets.
 
 Requires macOS 13 (Ventura) or later.
 
+## Screenshots
+
+| Snippets list | Dark mode |
+|---|---|
+| <img src="docs/screenshots/list-light.png" width="380" alt="SnippetsBar panel listing text replacements"> | <img src="docs/screenshots/list-dark.png" width="380" alt="SnippetsBar panel in dark mode"> |
+| **Editing a snippet** | **Importing a .plist** |
+| <img src="docs/screenshots/editor.png" width="380" alt="Editing the ;sig snippet"> | <img src="docs/screenshots/import.png" width="380" alt="Import summary: imported 2, replaced 1, skipped 1"> |
+
 ## Why SnippetsBar?
 
 I was looking for a **simple, free and open-source alternative to aText** and other
