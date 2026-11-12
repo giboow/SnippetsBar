@@ -36,6 +36,11 @@ Requires macOS 13 (Ventura) or later.
 | **Editing a snippet** | **Importing a .plist** |
 | <img src="docs/screenshots/editor.png" width="380" alt="Editing the ;sig snippet"> | <img src="docs/screenshots/import.png" width="380" alt="Import summary: imported 2, replaced 1, skipped 1"> |
 
+<p align="center">
+  <img src="docs/screenshots/settings.png" width="460" alt="Settings window: launch at login, quick pick shortcut, version and updates"><br>
+  <em>Settings (⌘,)</em>
+</p>
+
 ## Why SnippetsBar?
 
 I was looking for a **simple, free and open-source alternative to aText** and other
