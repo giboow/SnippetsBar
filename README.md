@@ -21,7 +21,7 @@ open /Applications/SnippetsBar.app
 ```
 
 (Il faut Xcode ou au minimum les Command Line Tools : `xcode-select --install`.)
-Pour développer : `open Package.swift` dans Xcode, ou `swift run`.
+Pour développer : `open Package.swift` dans Xcode, ou `swift run`. Tests : `swift test`.
 
 ### Accès complet au disque
 

@@ -1,12 +1,12 @@
 import SwiftUI
+import SnippetsBarCore
 
 struct EditorView: View {
     @EnvironmentObject private var store: SnippetStore
     let target: ContentView.EditTarget
     let onClose: () -> Void
 
-    @State private var shortcut = ""
-    @State private var phrase = ""
+    @State private var draft = SnippetDraft()
     @State private var confirmDelete = false
     @FocusState private var focus: Field?
 
@@ -17,10 +17,7 @@ struct EditorView: View {
         return nil
     }
 
-    private var trimmedShortcut: String { shortcut.trimmingCharacters(in: .whitespacesAndNewlines) }
-    private var isDuplicate: Bool { store.isDuplicate(shortcut: trimmedShortcut, excluding: existing?.id) }
-    private var shortcutHasSpace: Bool { trimmedShortcut.contains(where: \.isWhitespace) }
-    private var canSave: Bool { !trimmedShortcut.isEmpty && !phrase.isEmpty && !shortcutHasSpace }
+    private var isDuplicate: Bool { draft.isDuplicate(in: store.snippets, excluding: existing?.id) }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -44,11 +41,11 @@ struct EditorView: View {
             VStack(alignment: .leading, spacing: 14) {
                 VStack(alignment: .leading, spacing: 5) {
                     Text("Raccourci").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
-                    TextField("ex. ;sig", text: $shortcut)
+                    TextField("ex. ;sig", text: $draft.shortcut)
                         .textFieldStyle(.roundedBorder)
                         .font(.system(.body, design: .monospaced))
                         .focused($focus, equals: .shortcut)
-                    if shortcutHasSpace {
+                    if draft.shortcutHasWhitespace {
                         hint("Le raccourci ne doit pas contenir d'espace.", color: .red)
                     } else if isDuplicate {
                         hint("Ce raccourci existe déjà.", color: .orange)
@@ -61,9 +58,9 @@ struct EditorView: View {
                     HStack {
                         Text("Texte").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
                         Spacer()
-                        Text("\(phrase.count) car.").font(.caption2).foregroundStyle(.tertiary)
+                        Text("\(draft.phrase.count) car.").font(.caption2).foregroundStyle(.tertiary)
                     }
-                    TextEditor(text: $phrase)
+                    TextEditor(text: $draft.phrase)
                         .font(.body)
                         .scrollContentBackground(.hidden)
                         .padding(6)
@@ -92,19 +89,18 @@ struct EditorView: View {
                 Spacer()
                 Button("Annuler", action: onClose)
                 Button("Enregistrer") {
-                    if store.save(id: existing?.id, shortcut: trimmedShortcut, phrase: phrase) {
+                    if store.save(id: existing?.id, draft: draft) {
                         onClose()
                     }
                 }
                 .keyboardShortcut(.defaultAction)
                 .buttonStyle(.borderedProminent)
-                .disabled(!canSave)
+                .disabled(!draft.isValid)
             }
             .padding(.horizontal, 14).padding(.vertical, 10)
         }
         .onAppear {
-            shortcut = existing?.shortcut ?? ""
-            phrase = existing?.phrase ?? ""
+            draft = existing.map(SnippetDraft.init) ?? SnippetDraft()
             focus = existing == nil ? .shortcut : .phrase
         }
     }

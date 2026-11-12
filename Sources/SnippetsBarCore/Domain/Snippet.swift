@@ -1,0 +1,30 @@
+import Foundation
+
+public struct Snippet: Identifiable, Hashable {
+    public let id: Int64          // Z_PK dans la base Core Data
+    public var shortcut: String
+    public var phrase: String
+    public var modified: Date?
+
+    public init(id: Int64, shortcut: String, phrase: String, modified: Date? = nil) {
+        self.id = id
+        self.shortcut = shortcut
+        self.phrase = phrase
+        self.modified = modified
+    }
+}
+
+public extension Sequence where Element == Snippet {
+    /// Recherche insensible à la casse dans le raccourci et le texte.
+    func filtered(by query: String) -> [Snippet] {
+        let q = query.trimmingCharacters(in: .whitespaces)
+        guard !q.isEmpty else { return Array(self) }
+        return filter {
+            $0.shortcut.localizedCaseInsensitiveContains(q) || $0.phrase.localizedCaseInsensitiveContains(q)
+        }
+    }
+
+    func containsShortcut(_ shortcut: String, excluding id: Int64?) -> Bool {
+        contains { $0.shortcut == shortcut && $0.id != id }
+    }
+}

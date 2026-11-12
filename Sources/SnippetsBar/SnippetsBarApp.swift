@@ -1,9 +1,10 @@
 import SwiftUI
 import AppKit
+import SnippetsBarCore
 
 @main
 struct SnippetsBarApp: App {
-    @StateObject private var store = SnippetStore()
+    @StateObject private var store = SnippetStore(repository: TextReplacementsRepository())
 
     init() {
         // Pas d'icône dans le Dock, même lancé via `swift run`.
