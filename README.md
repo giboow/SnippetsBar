@@ -1,6 +1,7 @@
 # SnippetsBar
 
-Manage **macOS Text Replacements** from the menu bar.
+Manage **macOS Text Replacements** from the menu bar: a simple, free and open-source
+alternative to aText and TextExpander for everyday snippets.
 
 - Instant list and search of all your snippets
 - Click to copy the text, double-click to edit
@@ -14,6 +15,27 @@ Manage **macOS Text Replacements** from the menu bar.
 - Right-click the menu bar icon for settings (export, import, launch at login, report an issue, quit)
 
 Requires macOS 13 (Ventura) or later.
+
+## Why SnippetsBar?
+
+I was looking for a **simple, free and open-source alternative to aText** and other
+text expanders for Mac, such as TextExpander, Typinator, TypeIt4Me, Rocket Typist,
+Espanso, or the snippet features of Alfred and Raycast.
+
+Most of them run their own expansion engine, which means another app watching your
+keyboard, often a paid license or a subscription, and snippets that stay on the Mac.
+macOS already has a built-in text expander, **Text Replacements**, which works in
+every app and syncs through iCloud to your iPhone and iPad. It is just tedious to
+manage from System Settings.
+
+SnippetsBar is only a quick front end for that built-in feature, from the menu bar:
+
+- no expansion engine, no keyboard monitoring: macOS does the expansion;
+- your snippets sync to your other Apple devices through iCloud;
+- free, open source (GPL v3), no account, no subscription.
+
+What it does **not** do: variables, fill-in fields, scripts or rich text. If you need
+those, the tools above are a better fit.
 
 ## Languages
 
