@@ -19,6 +19,7 @@ enum SystemActions {
         let panel = NSOpenPanel()
         panel.allowedContentTypes = types
         panel.allowsMultipleSelection = false
+        raiseAboveOpenWindows(panel)
         return panel.runModal() == .OK ? panel.url : nil
     }
 
@@ -30,11 +31,23 @@ enum SystemActions {
         alert.informativeText = message
         buttons.forEach { alert.addButton(withTitle: $0) }
         alert.buttons.last?.keyEquivalent = "\u{1b}"
+        alert.layout()
+        raiseAboveOpenWindows(alert.window)
         return alert.runModal().rawValue - NSApplication.ModalResponse.alertFirstButtonReturn.rawValue
     }
 
     static func openFullDiskAccessSettings() {
         open("x-apple.systempreferences:com.apple.preference.security?Privacy_AllFiles")
+    }
+
+    /// Le panneau de la barre des menus est à un niveau élevé : sans cela, les dialogues
+    /// s'ouvriraient derrière lui.
+    private static func raiseAboveOpenWindows(_ window: NSWindow) {
+        let top = NSApp.windows
+            .filter { $0.isVisible && $0 !== window }
+            .map(\.level.rawValue)
+            .max() ?? 0
+        window.level = NSWindow.Level(rawValue: max(window.level.rawValue, top + 1))
     }
 
     private static func open(_ string: String) {
