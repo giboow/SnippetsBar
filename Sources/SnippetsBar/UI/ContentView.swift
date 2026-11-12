@@ -65,11 +65,10 @@ struct ContentView: View {
                     // App name: a brand, not localized.
                     Text(verbatim: "SnippetsBar")
                         .font(.title3.weight(.bold))
-                    if let version = store.currentVersion {
-                        Text(verbatim: "v\(version)")
-                            .font(.caption.weight(.medium))
-                            .foregroundStyle(.secondary)
-                    }
+                    // Development builds (swift run, Xcode, VS Code) have no version number.
+                    Text(verbatim: store.currentVersion.map { "v\($0)" } ?? "dev")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.secondary)
                 }
                 Text("Text Replacements")
                     .font(.caption)
