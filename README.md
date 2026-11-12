@@ -17,13 +17,13 @@ one-time Gatekeeper step.
 - **Quick pick from anywhere: ⌃⌘V** opens the list, type to filter, ↑ ↓ to select,
   ↩ to copy, then paste with ⌘V (handy in terminals, where Text Replacements don’t work).
   The shortcut can be changed in **Settings** (⋯ › Settings…, ⌘,)
-- Add (⌘N), edit, delete
+- Add (⌘N), edit, delete (right-click › Delete, with Undo or ⌘Z)
 - Duplicate shortcut detection
 - Automatic database backup before the first change
 - `.plist` export and import (same format as System Settings): on import, exact
   duplicates are skipped and a single question is asked for existing shortcuts with a
   different text (replace or keep)
-- Settings window (⌘,): launch at login and the quick pick shortcut
+- Settings window (⌘,): launch at login, the quick pick shortcut, version and update check
 - Right-click the menu bar icon for quick actions (export, import, settings, GitHub page, report an issue, quit)
 
 Requires macOS 13 (Ventura) or later.
@@ -35,6 +35,11 @@ Requires macOS 13 (Ventura) or later.
 | <img src="docs/screenshots/list-light.png" width="380" alt="SnippetsBar panel listing text replacements"> | <img src="docs/screenshots/list-dark.png" width="380" alt="SnippetsBar panel in dark mode"> |
 | **Editing a snippet** | **Importing a .plist** |
 | <img src="docs/screenshots/editor.png" width="380" alt="Editing the ;sig snippet"> | <img src="docs/screenshots/import.png" width="380" alt="Import summary: imported 2, replaced 1, skipped 1"> |
+
+<p align="center">
+  <img src="docs/screenshots/settings.png" width="460" alt="Settings window: launch at login, quick pick shortcut, version and updates"><br>
+  <em>Settings (⌘,)</em>
+</p>
 
 ## Why SnippetsBar?
 
@@ -118,6 +123,17 @@ signature): remove SnippetsBar from the list with the “–” button, then add
 
 Launch at login is enabled on first launch (macOS shows “Background Items Added”).
 To turn it off: **⋯ › Settings… › Launch at Login**, or System Settings › General › Login Items.
+
+## Updates
+
+SnippetsBar checks GitHub at most once a day for a newer release. When one is available,
+the panel footer and the right-click menu show **Update available**, and
+**Settings › About** offers a **Download** button that opens the release page. The
+current version is shown next to the app name in the panel, in **Settings › About** and at
+the top of the right-click menu.
+
+Only the request to the GitHub API is sent, with no personal data. Turn it off with
+**Settings › About › Check for Updates Automatically**.
 
 ## Where it works
 

@@ -3,18 +3,24 @@ import SwiftUI
 /// Feedback message shown at the bottom of the panel.
 struct Toast: Equatable, Identifiable {
     enum Kind { case success, info, error }
+    enum Action { case undoDelete }
 
     let id = UUID()
     let message: String
     let kind: Kind
+    var action: Action?
 
-    /// Errors stay longer: there must be time to read them.
-    var duration: TimeInterval { kind == .error ? 4 : 2.5 }
+    /// Errors and undoable actions stay longer: there must be time to read or react.
+    var duration: TimeInterval {
+        if action != nil { return 6 }
+        return kind == .error ? 4 : 2.5
+    }
 }
 
 struct ToastView: View {
     let toast: Toast
     let onDismiss: () -> Void
+    var onAction: () -> Void = {}
 
     var body: some View {
         let shape = RoundedRectangle(cornerRadius: 10)
@@ -26,6 +32,11 @@ struct ToastView: View {
                 .font(.body.weight(.medium))
                 .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
+            if toast.action == .undoDelete {
+                Button("Undo", action: onAction)
+                    .buttonStyle(.bordered)
+                    .help("⌘Z")
+            }
         }
         .padding(.horizontal, 14).padding(.vertical, 10)
         .background(color.opacity(0.12), in: shape)
