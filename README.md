@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/icon.png" width="128" alt="SnippetsBar icon"></p>
+
 # SnippetsBar
 
 Manage **macOS Text Replacements** from the menu bar: a simple, free and open-source
