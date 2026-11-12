@@ -35,10 +35,6 @@ struct ContentView: View {
         .animation(.easeOut(duration: 0.2), value: store.toast)
         .frame(width: 380, height: 480)
         .background(Color(nsColor: .windowBackgroundColor))
-        .onAppear {
-            store.reload()
-            store.refreshLaunchAtLogin()
-        }
     }
 
     // MARK: Liste
@@ -137,12 +133,8 @@ struct ContentView: View {
                 .foregroundStyle(.secondary)
             Spacer()
             Menu {
-                Button("Actualiser") { store.reload() }
-                    .keyboardShortcut("r")
-                Divider()
                 Button("Exporter en .plist…") { store.exportPlist() }
                 Button("Sauvegarder la base…") { store.backupNow() }
-                Button("Ouvrir les réglages Clavier") { SystemActions.openKeyboardSettings() }
                 Divider()
                 Toggle("Ouvrir au démarrage", isOn: Binding(
                     get: { store.launchAtLogin },

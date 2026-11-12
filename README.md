@@ -9,6 +9,7 @@ Gérez les **Remplacements de texte de macOS** depuis la barre des menus.
 - Sauvegarde automatique de la base avant la première modification
 - Export `.plist` (méthode officielle d'import dans Réglages Système)
 - Ouverture au démarrage (menu **⋯ › Ouvrir au démarrage**)
+- Clic droit sur l'icône de la barre des menus : réglages (exporter, sauvegarder, ouvrir au démarrage, quitter)
 
 Requiert macOS 13 (Ventura) ou plus récent.
 
