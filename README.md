@@ -1,36 +1,36 @@
 # SnippetsBar
 
-Gérez les **Remplacements de texte de macOS** depuis la barre des menus.
+Manage **macOS Text Replacements** from the menu bar.
 
-- Liste et recherche instantanée de tous vos snippets
-- Clic = copie le texte, double-clic = modifier
-- Ajout (⌘N), modification, suppression
-- Détection des raccourcis en double
-- Sauvegarde automatique de la base avant la première modification
-- Export et import `.plist` (même format que Réglages Système) : à l'import, les doublons
-  exacts sont ignorés et une seule question est posée pour les raccourcis existants avec un
-  autre texte (remplacer ou conserver)
-- Ouverture au démarrage (menu **⋯ › Ouvrir au démarrage**)
-- Clic droit sur l'icône de la barre des menus : réglages (exporter, importer, ouvrir au démarrage, quitter)
+- Instant list and search of all your snippets
+- Click to copy the text, double-click to edit
+- Add (⌘N), edit, delete
+- Duplicate shortcut detection
+- Automatic database backup before the first change
+- `.plist` export and import (same format as System Settings): on import, exact
+  duplicates are skipped and a single question is asked for existing shortcuts with a
+  different text (replace or keep)
+- Launch at login (menu **⋯ › Launch at Login**)
+- Right-click the menu bar icon for settings (export, import, launch at login, quit)
 
-Requiert macOS 13 (Ventura) ou plus récent.
+Requires macOS 13 (Ventura) or later.
 
 ## Installation
 
-### Depuis les Releases
+### From Releases
 
-1. Téléchargez `SnippetsBar-vX.Y.Z.zip` depuis la page
-   [Releases](https://github.com/giboow/SnippetsBar/releases), décompressez-le et
-   placez `SnippetsBar.app` dans `/Applications`.
-2. L'app n'est pas signée par un développeur Apple identifié : au premier lancement,
-   macOS refuse de l'ouvrir. Allez dans **Réglages Système › Confidentialité et sécurité**,
-   puis cliquez sur **Ouvrir quand même** en bas de la page.
-   Ou, dans le Terminal :
+1. Download `SnippetsBar-vX.Y.Z.zip` from the
+   [Releases](https://github.com/giboow/SnippetsBar/releases) page, unzip it and
+   move `SnippetsBar.app` to `/Applications`.
+2. The app is not signed by an identified Apple developer, so macOS refuses to open it
+   the first time. Go to **System Settings › Privacy & Security** and click
+   **Open Anyway** at the bottom of the page.
+   Or, in Terminal:
    ```bash
    xattr -d com.apple.quarantine /Applications/SnippetsBar.app
    ```
 
-### Depuis les sources
+### From source
 
 ```bash
 git clone https://github.com/giboow/SnippetsBar.git && cd SnippetsBar
@@ -39,59 +39,56 @@ mv SnippetsBar.app /Applications/
 open /Applications/SnippetsBar.app
 ```
 
-(Il faut Xcode ou au minimum les Command Line Tools : `xcode-select --install`.)
-Une app compilée sur votre Mac n'est pas mise en quarantaine : pas d'étape Gatekeeper.
+(Requires Xcode or at least the Command Line Tools: `xcode-select --install`.)
+An app built on your own Mac is not quarantined, so there is no Gatekeeper step.
 
-Pour développer : `open Package.swift` dans Xcode, ou `swift run`. Tests : `swift test`.
+To develop: `open Package.swift` in Xcode, or `swift run`. Tests: `swift test`.
 
-### Publier une version
+### Publishing a release
 
 ```bash
 git tag v1.0.0 && git push origin v1.0.0
 ```
 
-Le workflow GitHub Actions lance les tests, compile l'app (Apple Silicon + Intel)
-et publie le `.zip` dans une release.
+The GitHub Actions workflow runs the tests, builds the app (Apple Silicon + Intel)
+and publishes the `.zip` in a release.
 
-### Accès complet au disque
+### Full Disk Access
 
-La base se trouve dans `~/Library/KeyboardServices/TextReplacements.db`.
-Si l'app affiche une erreur d'ouverture, ajoutez SnippetsBar dans
-**Réglages Système › Confidentialité et sécurité › Accès complet au disque**
-(un bouton y mène directement), puis cliquez sur « Réessayer ».
+The database lives in `~/Library/KeyboardServices/TextReplacements.db`.
+If the app shows an error when opening it, add SnippetsBar to
+**System Settings › Privacy & Security › Full Disk Access**
+(a button in the app takes you there), then click **Retry**.
 
-**Après une mise à jour**, macOS considère la nouvelle version comme une autre app
-(signature ad hoc) : retirez SnippetsBar de la liste avec le bouton « – », puis
-ajoutez-le de nouveau.
+**After an update**, macOS treats the new version as a different app (ad hoc
+signature): remove SnippetsBar from the list with the “–” button, then add it again.
 
-L'ouverture au démarrage est activée au premier lancement (macOS affiche « Élément
-d'arrière-plan ajouté »). Pour la désactiver : menu **⋯ › Ouvrir au démarrage**, ou
-Réglages Système › Général › Ouverture.
+Launch at login is enabled on first launch (macOS shows “Background Items Added”).
+To turn it off: menu **⋯ › Launch at Login**, or System Settings › General › Login Items.
 
-## Comment ça marche
+## How it works
 
-Apple ne fournit pas d'API publique pour les remplacements de texte. SnippetsBar
-lit et écrit directement la base SQLite (Core Data) utilisée par macOS :
+Apple provides no public API for text replacements. SnippetsBar reads and writes
+the SQLite (Core Data) database used by macOS directly:
 
-- **Ajout / modification** : l'entrée est marquée `ZNEEDSSAVETOCLOUD = 1`
-  pour que la synchro iCloud la pousse vers vos autres appareils.
-- **Suppression** : suppression « douce » (`ZWASDELETED = 1`), comme le fait macOS,
-  pour que la suppression se propage aussi.
-- **Avant la première écriture** de chaque session, une copie de la base est faite dans
+- **Add / edit**: the entry is flagged `ZNEEDSSAVETOCLOUD = 1` so that iCloud sync
+  pushes it to your other devices.
+- **Delete**: “soft” delete (`ZWASDELETED = 1`), as macOS does, so that the deletion
+  syncs too.
+- **Before the first write** of each session, a copy of the database is saved to
   `~/Library/Application Support/SnippetsBar/Backups/`.
 
-⚠️ Comme il s'agit d'un format interne non documenté :
+⚠️ Since this is an undocumented internal format:
 
-- les changements s'appliquent généralement tout de suite, mais certaines apps
-  ou les Réglages peuvent ne les voir qu'après un redémarrage de session ;
-- une future version de macOS peut changer le format. En cas de souci, restaurez une
-  sauvegarde, ou utilisez **⋯ › Exporter en .plist** et glissez le fichier dans
-  Réglages Système › Clavier › Remplacements de texte (méthode 100 % officielle).
+- changes usually apply immediately, but some apps or System Settings may only see
+  them after logging out and back in;
+- a future macOS version may change the format. If something goes wrong, restore a
+  backup, or use **⋯ › Export as .plist…** and drag the file into
+  System Settings › Keyboard › Text Replacements (the fully official method).
 
-## Licence
+## License
 
 Copyright © 2026 Philippe Gibert
 
-SnippetsBar est un logiciel libre distribué sous licence
-[GNU GPL v3](LICENSE) : vous pouvez le redistribuer et le modifier selon les
-termes de cette licence. Il est fourni sans aucune garantie.
+SnippetsBar is free software distributed under the [GNU GPL v3](LICENSE): you can
+redistribute and modify it under the terms of this license. It comes with no warranty.
