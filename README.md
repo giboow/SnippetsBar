@@ -8,6 +8,7 @@ Gérez les **Remplacements de texte de macOS** depuis la barre des menus.
 - Détection des raccourcis en double
 - Sauvegarde automatique de la base avant la première modification
 - Export `.plist` (méthode officielle d'import dans Réglages Système)
+- Ouverture au démarrage (menu **⋯ › Ouvrir au démarrage**)
 
 Requiert macOS 13 (Ventura) ou plus récent.
 
@@ -60,7 +61,8 @@ Si l'app affiche une erreur d'ouverture, ajoutez SnippetsBar dans
 (signature ad hoc) : retirez SnippetsBar de la liste avec le bouton « – », puis
 ajoutez-le de nouveau.
 
-Pour la lancer au démarrage : Réglages Système › Général › Ouverture.
+Pour la lancer au démarrage : menu **⋯ › Ouvrir au démarrage**. L'app apparaît alors dans
+Réglages Système › Général › Ouverture, où vous pouvez aussi la désactiver.
 
 ## Comment ça marche
 

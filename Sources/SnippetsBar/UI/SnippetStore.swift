@@ -6,6 +6,7 @@ final class SnippetStore: ObservableObject {
     @Published private(set) var snippets: [Snippet] = []
     @Published var errorMessage: String?
     @Published var toast: String?
+    @Published private(set) var launchAtLogin = LaunchAtLogin.isEnabled
 
     private let repository: SnippetRepository
 
@@ -61,6 +62,25 @@ final class SnippetStore: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    func refreshLaunchAtLogin() {
+        launchAtLogin = LaunchAtLogin.isEnabled
+    }
+
+    func setLaunchAtLogin(_ enabled: Bool) {
+        do {
+            try LaunchAtLogin.setEnabled(enabled)
+            if LaunchAtLogin.requiresApproval {
+                LaunchAtLogin.openSystemSettings()
+                flash("À autoriser dans Réglages Système")
+            } else {
+                flash(enabled ? "Ouverture au démarrage activée" : "Ouverture au démarrage désactivée")
+            }
+        } catch {
+            flash("Impossible de modifier l'ouverture au démarrage")
+        }
+        refreshLaunchAtLogin()
     }
 
     // MARK: -

@@ -35,7 +35,10 @@ struct ContentView: View {
         .animation(.easeOut(duration: 0.2), value: store.toast)
         .frame(width: 380, height: 480)
         .background(Color(nsColor: .windowBackgroundColor))
-        .onAppear { store.reload() }
+        .onAppear {
+            store.reload()
+            store.refreshLaunchAtLogin()
+        }
     }
 
     // MARK: Liste
@@ -140,6 +143,11 @@ struct ContentView: View {
                 Button("Exporter en .plist…") { store.exportPlist() }
                 Button("Sauvegarder la base…") { store.backupNow() }
                 Button("Ouvrir les réglages Clavier") { SystemActions.openKeyboardSettings() }
+                Divider()
+                Toggle("Ouvrir au démarrage", isOn: Binding(
+                    get: { store.launchAtLogin },
+                    set: { store.setLaunchAtLogin($0) }
+                ))
                 Divider()
                 Button("Quitter SnippetsBar") { NSApplication.shared.terminate(nil) }
                     .keyboardShortcut("q")
