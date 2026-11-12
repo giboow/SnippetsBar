@@ -100,6 +100,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         launch.state = store.launchAtLogin ? .on : .off
         menu.addItem(launch)
         menu.addItem(.separator())
+        menu.addItem(ActionMenuItem(String(localized: "SnippetsBar on GitHub")) { SystemActions.openRepository() })
         menu.addItem(ActionMenuItem(String(localized: "Report an Issue…")) { SystemActions.openIssues() })
         menu.addItem(ActionMenuItem(String(localized: "Quit SnippetsBar"), key: "q") { NSApp.terminate(nil) })
         return menu
