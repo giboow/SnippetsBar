@@ -124,7 +124,8 @@ To turn it off: **⋯ › Settings… › Launch at Login**, or System Settings 
 SnippetsBar checks GitHub at most once a day for a newer release. When one is available,
 the panel footer and the right-click menu show **Update available**, and
 **Settings › About** offers a **Download** button that opens the release page. The
-current version is shown in **Settings › About** and at the top of the right-click menu.
+current version is shown next to the app name in the panel, in **Settings › About** and at
+the top of the right-click menu.
 
 Only the request to the GitHub API is sent, with no personal data. Turn it off with
 **Settings › About › Check for Updates Automatically**.
