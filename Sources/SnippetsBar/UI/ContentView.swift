@@ -51,9 +51,23 @@ struct ContentView: View {
     }
 
     private var header: some View {
-        HStack {
-            Label("Text Replacements", systemImage: "text.quote")
-                .font(.headline)
+        HStack(spacing: 10) {
+            Image(systemName: "text.quote")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: 30, height: 30)
+                .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 7))
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 1) {
+                // App name: a brand, not localized.
+                Text(verbatim: "SnippetsBar")
+                    .font(.title3.weight(.bold))
+                Text("Text Replacements")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityAddTraits(.isHeader)
             Spacer()
             Button { editing = .new } label: {
                 Image(systemName: "plus")
