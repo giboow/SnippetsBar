@@ -4,6 +4,8 @@ import SnippetsBarCore
 struct SnippetRow: View {
     let snippet: Snippet
     var isSelected = false
+    /// Just copied: green confirmation for a moment.
+    var isCopied = false
     let onCopy: () -> Void
     let onEdit: () -> Void
     @State private var hovering = false
@@ -20,7 +22,13 @@ struct SnippetRow: View {
                 .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            if hovering {
+            if isCopied {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(.green)
+                    .transition(.scale.combined(with: .opacity))
+                    .accessibilityHidden(true)
+            } else if hovering {
                 HStack(spacing: 4) {
                     iconButton("doc.on.doc", help: "Copy Text", action: onCopy)
                     iconButton("pencil", help: "Edit", action: onEdit)
@@ -40,6 +48,7 @@ struct SnippetRow: View {
             Button("Edit…", action: onEdit)
         }
         .animation(.easeOut(duration: 0.12), value: hovering)
+        .animation(.spring(response: 0.25, dampingFraction: 0.7), value: isCopied)
         // VoiceOver: one readable row; the hover buttons become actions.
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(snippet.shortcut): \(snippet.phrase)")
@@ -51,6 +60,7 @@ struct SnippetRow: View {
 
     /// Keyboard selection wins over hover.
     private var background: Color {
+        if isCopied { return Color.green.opacity(0.2) }
         if isSelected { return Color.accentColor.opacity(0.18) }
         return hovering ? Color.primary.opacity(0.07) : .clear
     }

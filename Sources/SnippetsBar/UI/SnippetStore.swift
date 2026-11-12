@@ -16,6 +16,10 @@ final class SnippetStore: ObservableObject {
     var isEditing = false
     /// Set by StatusBarController: closes the panel after a keyboard pick.
     var onRequestClose: (() -> Void)?
+    /// Set by StatusBarController: confirms a copy on the menu bar icon.
+    var onCopy: (() -> Void)?
+    /// Snippet just copied, briefly highlighted in the list.
+    @Published private(set) var lastCopiedID: Snippet.ID?
 
     // Global shortcut of the quick pick.
     @Published private(set) var quickPickShortcut = HotKeyShortcut.load()
@@ -57,12 +61,16 @@ final class SnippetStore: ObservableObject {
         selectedID = items[min(max(index + delta, 0), items.count - 1)].id
     }
 
-    /// Copies the selected snippet and closes the panel; false if nothing is selected.
+    /// Copies the selected snippet and closes the panel once the row has confirmed the copy;
+    /// false if nothing is selected.
     @discardableResult
     func copySelection() -> Bool {
         guard let snippet = visibleSnippets.first(where: { $0.id == selectedID }) else { return false }
         copy(snippet)
-        onRequestClose?()
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 800_000_000)
+            onRequestClose?()
+        }
         return true
     }
 
@@ -165,7 +173,28 @@ final class SnippetStore: ObservableObject {
 
     func copy(_ snippet: Snippet) {
         SystemActions.copyToPasteboard(snippet.phrase)
-        flash(String(localized: "Copied: \(snippet.shortcut)"))
+        // Show the copied text, not the shortcut, which suggested the shortcut was copied.
+        flash(String(localized: "Copied: \(Self.preview(of: snippet.phrase))"))
+        onCopy?()
+        lastCopiedID = snippet.id
+        Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            if lastCopiedID == snippet.id { lastCopiedID = nil }
+        }
+    }
+
+    /// First line of the text, shortened for a toast.
+    static func preview(of text: String, maxLength: Int = 32) -> String {
+        let firstLine = text.split(whereSeparator: \.isNewline).first.map(String.init) ?? text
+        let trimmed = firstLine.trimmingCharacters(in: .whitespaces)
+        return trimmed.count > maxLength ? trimmed.prefix(maxLength - 1) + "…" : trimmed
+    }
+
+    /// Called when the panel closes: a copy confirmation or a message must not
+    /// show up again the next time it opens.
+    func clearTransientFeedback() {
+        lastCopiedID = nil
+        toast = nil
     }
 
 

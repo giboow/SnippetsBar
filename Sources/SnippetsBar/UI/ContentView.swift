@@ -140,6 +140,7 @@ struct ContentView: View {
                         ForEach(items) { snippet in
                             SnippetRow(snippet: snippet,
                                        isSelected: snippet.id == store.selectedID,
+                                       isCopied: snippet.id == store.lastCopiedID,
                                        onCopy: { store.copy(snippet) },
                                        onEdit: { editing = .existing(snippet) })
                                 .id(snippet.id)
