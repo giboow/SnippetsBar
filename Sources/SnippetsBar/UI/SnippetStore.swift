@@ -45,11 +45,40 @@ final class SnippetStore: ObservableObject {
         flash("Copié : \(snippet.shortcut)")
     }
 
-    func backupNow() {
+
+    /// Importe un .plist au format des Réglages Système. Les doublons exacts sont ignorés ;
+    /// pour les raccourcis existants avec un autre texte, une seule question pour tous.
+    func importPlist() {
+        guard let url = SystemActions.chooseFile(types: [.propertyList]) else { return }
+        reload()
+        let plan: ImportPlan
         do {
-            SystemActions.revealInFinder(try repository.backup())
+            plan = ImportPlan(importing: try PlistImporter.drafts(from: url), into: snippets)
         } catch {
-            errorMessage = error.localizedDescription
+            return flash("Fichier .plist invalide")
+        }
+        guard !plan.isEmpty else {
+            return flash("Rien à importer (\(plan.duplicateCount) déjà présent\(plan.duplicateCount > 1 ? "s" : ""))")
+        }
+
+        var replace = false
+        if !plan.conflicts.isEmpty {
+            let count = plan.conflicts.count
+            let shortcuts = plan.conflicts.prefix(5).map(\.snippet.shortcut).joined(separator: ", ")
+            let choice = SystemActions.ask(
+                count > 1 ? "\(count) raccourcis existent déjà avec un texte différent"
+                          : "1 raccourci existe déjà avec un texte différent",
+                message: shortcuts + (count > 5 ? "…" : ""),
+                buttons: ["Remplacer", "Conserver les actuels", "Annuler"]
+            )
+            switch choice {
+            case 0: replace = true
+            case 1: replace = false
+            default: return
+            }
+        }
+        _ = perform(plan.summary(replacingConflicts: replace)) {
+            try repository.apply(plan, replacingConflicts: replace)
         }
     }
 

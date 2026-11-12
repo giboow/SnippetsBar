@@ -54,45 +54,60 @@ public final class TextReplacementsRepository: SnippetRepository {
 
     public func insert(shortcut: String, phrase: String) throws {
         try write { db in
-            let cols = try columns(db)
-            var ent: Int64 = 0, maxPK: Int64 = 0
-            var found = false
-            try db.query("SELECT Z_ENT, Z_MAX FROM Z_PRIMARYKEY WHERE Z_NAME = 'TextReplacementEntry'") { row in
-                ent = row.int64(0)
-                maxPK = row.int64(1)
-                found = true
-            }
-            guard found else { throw DBError.schema("entité TextReplacementEntry absente de Z_PRIMARYKEY") }
-            // Sécurité : ne jamais réutiliser un Z_PK existant.
-            try db.query("SELECT IFNULL(MAX(Z_PK), 0) FROM \(table)") { row in
-                maxPK = max(maxPK, row.int64(0))
-            }
-            let pk = maxPK + 1
-
-            let candidates: [(String, SQLValue)] = [
-                ("Z_PK", .int(pk)),
-                ("Z_ENT", .int(ent)),
-                ("Z_OPT", .int(1)),
-                ("ZSHORTCUT", .text(shortcut)),
-                ("ZPHRASE", .text(phrase)),
-                ("ZTIMESTAMP", .double(Date().timeIntervalSinceReferenceDate)),
-                ("ZUNIQUENAME", .text(UUID().uuidString)),
-                ("ZNEEDSSAVETOCLOUD", .int(1)),
-                ("ZWASDELETED", .int(0)),
-            ]
-            let values = candidates.filter { cols.contains($0.0) }
-            let names = values.map(\.0).joined(separator: ", ")
-            let marks = Array(repeating: "?", count: values.count).joined(separator: ", ")
-            try db.exec("INSERT INTO \(table) (\(names)) VALUES (\(marks))", values.map(\.1))
-            try db.exec("UPDATE Z_PRIMARYKEY SET Z_MAX = ? WHERE Z_ENT = ?", [.int(pk), .int(ent)])
+            try insertRow(db, cols: try columns(db), shortcut: shortcut, phrase: phrase)
         }
     }
 
     public func update(id: Int64, shortcut: String, phrase: String) throws {
         try write { db in
-            let cols = try columns(db)
-            try touch(db, id: id, cols: cols, setting: [("ZSHORTCUT", .text(shortcut)), ("ZPHRASE", .text(phrase))])
+            try touch(db, id: id, cols: try columns(db), setting: [("ZSHORTCUT", .text(shortcut)), ("ZPHRASE", .text(phrase))])
         }
+    }
+
+    public func apply(_ plan: ImportPlan, replacingConflicts: Bool) throws {
+        try write { db in
+            let cols = try columns(db)
+            for draft in plan.additions {
+                try insertRow(db, cols: cols, shortcut: draft.normalizedShortcut, phrase: draft.phrase)
+            }
+            guard replacingConflicts else { return }
+            for conflict in plan.conflicts {
+                try touch(db, id: conflict.snippet.id, cols: cols, setting: [("ZPHRASE", .text(conflict.phrase))])
+            }
+        }
+    }
+
+    private func insertRow(_ db: SQLiteConnection, cols: Set<String>, shortcut: String, phrase: String) throws {
+        var ent: Int64 = 0, maxPK: Int64 = 0
+        var found = false
+        try db.query("SELECT Z_ENT, Z_MAX FROM Z_PRIMARYKEY WHERE Z_NAME = 'TextReplacementEntry'") { row in
+            ent = row.int64(0)
+            maxPK = row.int64(1)
+            found = true
+        }
+        guard found else { throw DBError.schema("entité TextReplacementEntry absente de Z_PRIMARYKEY") }
+        // Sécurité : ne jamais réutiliser un Z_PK existant.
+        try db.query("SELECT IFNULL(MAX(Z_PK), 0) FROM \(table)") { row in
+            maxPK = max(maxPK, row.int64(0))
+        }
+        let pk = maxPK + 1
+
+        let candidates: [(String, SQLValue)] = [
+            ("Z_PK", .int(pk)),
+            ("Z_ENT", .int(ent)),
+            ("Z_OPT", .int(1)),
+            ("ZSHORTCUT", .text(shortcut)),
+            ("ZPHRASE", .text(phrase)),
+            ("ZTIMESTAMP", .double(Date().timeIntervalSinceReferenceDate)),
+            ("ZUNIQUENAME", .text(UUID().uuidString)),
+            ("ZNEEDSSAVETOCLOUD", .int(1)),
+            ("ZWASDELETED", .int(0)),
+        ]
+        let values = candidates.filter { cols.contains($0.0) }
+        let names = values.map(\.0).joined(separator: ", ")
+        let marks = Array(repeating: "?", count: values.count).joined(separator: ", ")
+        try db.exec("INSERT INTO \(table) (\(names)) VALUES (\(marks))", values.map(\.1))
+        try db.exec("UPDATE Z_PRIMARYKEY SET Z_MAX = ? WHERE Z_ENT = ?", [.int(pk), .int(ent)])
     }
 
     /// Suppression « douce », comme le fait macOS, pour que la synchro iCloud

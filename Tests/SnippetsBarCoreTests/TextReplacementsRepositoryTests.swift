@@ -4,7 +4,7 @@ import XCTest
 /// Tests sur une copie jetable reproduisant le schéma Core Data de macOS.
 final class TextReplacementsRepositoryTests: XCTestCase {
     private var dir: URL!
-    private var repo: TextReplacementsRepository!
+    var repository: TextReplacementsRepository!
 
     override func setUpWithError() throws {
         dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
@@ -21,7 +21,7 @@ final class TextReplacementsRepositoryTests: XCTestCase {
                 """)
             try db.exec("INSERT INTO ZTEXTREPLACEMENTENTRY VALUES (1, 1, 1, 0, 0, 0, 'Bonjour', ';bj', 'u1')")
         }
-        repo = TextReplacementsRepository(url: dbURL, backupDirectory: dir.appendingPathComponent("Backups"))
+        repository = TextReplacementsRepository(url: dbURL, backupDirectory: dir.appendingPathComponent("Backups"))
     }
 
     override func tearDownWithError() throws {
@@ -29,25 +29,25 @@ final class TextReplacementsRepositoryTests: XCTestCase {
     }
 
     func testFetchAll() throws {
-        let all = try repo.fetchAll()
+        let all = try repository.fetchAll()
         XCTAssertEqual(all.map(\.shortcut), [";bj"])
         XCTAssertEqual(all.first?.phrase, "Bonjour")
     }
 
     func testInsertUsesNextPrimaryKeyAndSortsByShortcut() throws {
-        try repo.insert(shortcut: ";adr", phrase: "1 rue de la Paix")
-        let all = try repo.fetchAll()
+        try repository.insert(shortcut: ";adr", phrase: "1 rue de la Paix")
+        let all = try repository.fetchAll()
         XCTAssertEqual(all.map(\.shortcut), [";adr", ";bj"])
         XCTAssertEqual(all.first?.id, 2)
-        try SQLiteConnection.open(repo.url, readOnly: true) { db in
+        try SQLiteConnection.open(repository.url, readOnly: true) { db in
             try db.query("SELECT Z_MAX FROM Z_PRIMARYKEY WHERE Z_ENT = 1") { XCTAssertEqual($0.int64(0), 2) }
         }
     }
 
     func testUpdateBumpsOptimisticLock() throws {
-        try repo.update(id: 1, shortcut: ";bjr", phrase: "Bonjour !")
-        XCTAssertEqual(try repo.fetchAll().first?.shortcut, ";bjr")
-        try SQLiteConnection.open(repo.url, readOnly: true) { db in
+        try repository.update(id: 1, shortcut: ";bjr", phrase: "Bonjour !")
+        XCTAssertEqual(try repository.fetchAll().first?.shortcut, ";bjr")
+        try SQLiteConnection.open(repository.url, readOnly: true) { db in
             try db.query("SELECT Z_OPT, ZNEEDSSAVETOCLOUD FROM ZTEXTREPLACEMENTENTRY WHERE Z_PK = 1") {
                 XCTAssertEqual($0.int64(0), 2)
                 XCTAssertEqual($0.int64(1), 1)
@@ -56,17 +56,17 @@ final class TextReplacementsRepositoryTests: XCTestCase {
     }
 
     func testDeleteIsSoft() throws {
-        try repo.delete(id: 1)
-        XCTAssertTrue(try repo.fetchAll().isEmpty)
-        try SQLiteConnection.open(repo.url, readOnly: true) { db in
+        try repository.delete(id: 1)
+        XCTAssertTrue(try repository.fetchAll().isEmpty)
+        try SQLiteConnection.open(repository.url, readOnly: true) { db in
             try db.query("SELECT ZWASDELETED FROM ZTEXTREPLACEMENTENTRY WHERE Z_PK = 1") { XCTAssertEqual($0.int64(0), 1) }
         }
     }
 
     func testFirstWriteCreatesBackup() throws {
-        try repo.insert(shortcut: ";a", phrase: "a")
-        try repo.insert(shortcut: ";b", phrase: "b")
-        let backups = try FileManager.default.contentsOfDirectory(atPath: repo.backupDirectory.path)
+        try repository.insert(shortcut: ";a", phrase: "a")
+        try repository.insert(shortcut: ";b", phrase: "b")
+        let backups = try FileManager.default.contentsOfDirectory(atPath: repository.backupDirectory.path)
         XCTAssertEqual(backups.count, 1)
     }
 }

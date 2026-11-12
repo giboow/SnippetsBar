@@ -134,7 +134,7 @@ struct ContentView: View {
             Spacer()
             Menu {
                 Button("Exporter en .plist…") { store.exportPlist() }
-                Button("Sauvegarder la base…") { store.backupNow() }
+                Button("Importer un .plist…") { store.importPlist() }
                 Divider()
                 Toggle("Ouvrir au démarrage", isOn: Binding(
                     get: { store.launchAtLogin },

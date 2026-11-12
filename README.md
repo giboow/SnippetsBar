@@ -7,9 +7,11 @@ Gérez les **Remplacements de texte de macOS** depuis la barre des menus.
 - Ajout (⌘N), modification, suppression
 - Détection des raccourcis en double
 - Sauvegarde automatique de la base avant la première modification
-- Export `.plist` (méthode officielle d'import dans Réglages Système)
+- Export et import `.plist` (même format que Réglages Système) : à l'import, les doublons
+  exacts sont ignorés et une seule question est posée pour les raccourcis existants avec un
+  autre texte (remplacer ou conserver)
 - Ouverture au démarrage (menu **⋯ › Ouvrir au démarrage**)
-- Clic droit sur l'icône de la barre des menus : réglages (exporter, sauvegarder, ouvrir au démarrage, quitter)
+- Clic droit sur l'icône de la barre des menus : réglages (exporter, importer, ouvrir au démarrage, quitter)
 
 Requiert macOS 13 (Ventura) ou plus récent.
 

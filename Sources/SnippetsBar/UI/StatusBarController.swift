@@ -41,8 +41,13 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
     private func togglePopover(from button: NSStatusBarButton) {
         if popover.isShown {
             popover.performClose(nil)
-            return
+        } else {
+            showPopover()
         }
+    }
+
+    private func showPopover() {
+        guard let button = statusItem.button, !popover.isShown else { return }
         store.reload()
         store.refreshLaunchAtLogin()
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
@@ -74,7 +79,11 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         store.refreshLaunchAtLogin()
         let menu = NSMenu()
         menu.addItem(ActionMenuItem("Exporter en .plist…") { [store] in store.exportPlist() })
-        menu.addItem(ActionMenuItem("Sauvegarder la base…") { [store] in store.backupNow() })
+        // Panneau ouvert ensuite pour montrer le résultat (toast et nouvelles entrées).
+        menu.addItem(ActionMenuItem("Importer un .plist…") { [weak self] in
+            self?.store.importPlist()
+            self?.showPopover()
+        })
         menu.addItem(.separator())
         let launch = ActionMenuItem("Ouvrir au démarrage") { [store] in store.setLaunchAtLogin(!store.launchAtLogin) }
         launch.state = store.launchAtLogin ? .on : .off
