@@ -24,21 +24,21 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             button.image = image
             button.toolTip = "SnippetsBar — clic droit : réglages"
             button.target = self
-            button.action = #selector(handleClick(_:))
+            button.action = #selector(handleClick)
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
     }
 
-    @objc private func handleClick(_ sender: NSStatusBarButton) {
+    @objc private func handleClick() {
         let event = NSApp.currentEvent
         if event?.type == .rightMouseUp || event?.modifierFlags.contains(.control) == true {
             showSettingsMenu()
         } else {
-            togglePopover(from: sender)
+            togglePopover()
         }
     }
 
-    private func togglePopover(from button: NSStatusBarButton) {
+    private func togglePopover() {
         if popover.isShown {
             popover.performClose(nil)
         } else {

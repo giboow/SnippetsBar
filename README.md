@@ -64,8 +64,9 @@ Si l'app affiche une erreur d'ouverture, ajoutez SnippetsBar dans
 (signature ad hoc) : retirez SnippetsBar de la liste avec le bouton « – », puis
 ajoutez-le de nouveau.
 
-Pour la lancer au démarrage : menu **⋯ › Ouvrir au démarrage**. L'app apparaît alors dans
-Réglages Système › Général › Ouverture, où vous pouvez aussi la désactiver.
+L'ouverture au démarrage est activée au premier lancement (macOS affiche « Élément
+d'arrière-plan ajouté »). Pour la désactiver : menu **⋯ › Ouvrir au démarrage**, ou
+Réglages Système › Général › Ouverture.
 
 ## Comment ça marche
 
