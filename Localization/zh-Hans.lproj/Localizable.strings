@@ -49,7 +49,6 @@
 "Tip: start with “;” to avoid accidental triggers." = "提示：以“;”开头可避免误触发。";
 "Text" = "文本";
 "Length: %lld" = "长度：%lld";
-"Confirm Deletion" = "确认删除";
 "Delete" = "删除";
 "Deleted: %@" = "已删除：%@";
 "Deleted: %@. Press ⌘Z to undo." = "已删除：%@。按 ⌘Z 撤销。";
@@ -68,7 +67,6 @@
 "SnippetsBar — right-click for settings" = "SnippetsBar — 右键点按：设置";
 "Snippet added" = "已添加片段";
 "Snippet updated" = "已修改片段";
-"Snippet deleted" = "已删除片段";
 "Copied: %@" = "已拷贝：%@";
 "Invalid .plist file" = "无效的 .plist 文件";
 "Nothing to import (already present: %lld)" = "没有可导入的内容（已存在：%lld）";

@@ -166,10 +166,6 @@ final class SnippetStore: ObservableObject {
         }
     }
 
-    @discardableResult
-    func delete(_ snippet: Snippet) -> Bool {
-        perform(String(localized: "Snippet deleted")) { try repository.delete(id: snippet.id) }
-    }
 
     // MARK: Delete with undo
 

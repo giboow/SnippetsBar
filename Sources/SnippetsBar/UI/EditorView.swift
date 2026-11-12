@@ -7,7 +7,6 @@ struct EditorView: View {
     let onClose: () -> Void
 
     @State private var draft = SnippetDraft()
-    @State private var confirmDelete = false
     @FocusState private var focus: Field?
 
     private enum Field { case shortcut, phrase }
@@ -75,16 +74,13 @@ struct EditorView: View {
 
             HStack {
                 if let existing {
-                    Button(role: .destructive) {
-                        if confirmDelete {
-                            if store.delete(existing) { onClose() }
-                        } else {
-                            confirmDelete = true
-                        }
+                    // Immediate, with Undo in the list toast (or ⌘Z), like deleting from the list.
+                    Button {
+                        store.deleteWithUndo(existing)
+                        onClose()
                     } label: {
-                        Text(confirmDelete ? LocalizedStringKey("Confirm Deletion") : LocalizedStringKey("Delete"))
+                        Label("Delete", systemImage: "trash")
                     }
-                    .foregroundStyle(.red)
                 }
                 Spacer()
                 Button("Cancel", action: onClose)
