@@ -22,6 +22,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Pas d'icône dans le Dock, même lancé via `swift run`.
         NSApp.setActivationPolicy(.accessory)
         NSApp.mainMenu = Self.editMenu()
+        LaunchAtLogin.enableOnFirstLaunch()
         statusBar = StatusBarController(store: SnippetStore(repository: TextReplacementsRepository()))
     }
 

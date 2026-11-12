@@ -23,11 +23,8 @@ struct ContentView: View {
             }
 
             if let toast = store.toast {
-                Text(toast)
-                    .font(.callout.weight(.medium))
-                    .padding(.horizontal, 12).padding(.vertical, 6)
-                    .background(.thickMaterial, in: Capsule())
-                    .padding(.bottom, 44)
+                ToastView(toast: toast) { store.dismissToast() }
+                    .padding(.bottom, 48)
                     .transition(.opacity.combined(with: .move(edge: .bottom)))
             }
         }
@@ -134,7 +131,7 @@ struct ContentView: View {
             Spacer()
             Menu {
                 Button("Exporter en .plist…") { store.exportPlist() }
-                Button("Sauvegarder la base…") { store.backupNow() }
+                Button("Importer un .plist…") { store.importPlist() }
                 Divider()
                 Toggle("Ouvrir au démarrage", isOn: Binding(
                     get: { store.launchAtLogin },

@@ -13,8 +13,12 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         self.store = store
         super.init()
 
-        popover.behavior = .transient
+        // Fermeture gérée ici (clic dans une autre app, changement d'app) et non par .transient :
+        // le sélecteur de fichier et les alertes de l'import ne doivent pas fermer le panneau.
+        popover.behavior = .applicationDefined
         popover.delegate = self
+        NotificationCenter.default.addObserver(self, selector: #selector(closePopover),
+                                               name: NSApplication.didResignActiveNotification, object: nil)
         popover.contentSize = NSSize(width: 380, height: 480)
         popover.contentViewController = NSHostingController(rootView: ContentView().environmentObject(store))
 
@@ -24,36 +28,48 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             button.image = image
             button.toolTip = "SnippetsBar — clic droit : réglages"
             button.target = self
-            button.action = #selector(handleClick(_:))
+            button.action = #selector(handleClick)
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
     }
 
-    @objc private func handleClick(_ sender: NSStatusBarButton) {
+    @objc private func handleClick() {
         let event = NSApp.currentEvent
         if event?.type == .rightMouseUp || event?.modifierFlags.contains(.control) == true {
             showSettingsMenu()
         } else {
-            togglePopover(from: sender)
+            togglePopover()
         }
     }
 
-    private func togglePopover(from button: NSStatusBarButton) {
+    private func togglePopover() {
         if popover.isShown {
             popover.performClose(nil)
-            return
+        } else {
+            showPopover()
         }
+    }
+
+    private func showPopover() {
+        guard let button = statusItem.button, !popover.isShown else { return }
         store.reload()
         store.refreshLaunchAtLogin()
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         // App sans Dock : sans activation, les champs de saisie ne reçoivent pas le clavier.
         NSApp.activate(ignoringOtherApps: true)
         popover.contentViewController?.view.window?.makeKey()
-        // .transient ne voit pas toujours les clics dans les autres apps quand l'app n'a pas de Dock :
-        // on ferme nous-mêmes au premier clic extérieur. (Pas d'autorisation requise pour la souris.)
+        SystemActions.menuBarPanel = popover.contentViewController?.view.window
+        // Clic dans une autre app : fermeture. (Pas d'autorisation requise pour la souris.)
         outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
-            self?.popover.performClose(nil)
+            self?.closePopover()
         }
+    }
+
+    @objc private func closePopover() {
+        // Pendant un dialogue (sélecteur de fichier, alerte), le panneau reste ouvert : le sélecteur
+        // tourne en partie dans un autre processus, ses clics passent pour des clics extérieurs.
+        guard popover.isShown, NSApp.modalWindow == nil else { return }
+        popover.performClose(nil)
     }
 
     func popoverDidClose(_ notification: Notification) {
@@ -74,7 +90,11 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         store.refreshLaunchAtLogin()
         let menu = NSMenu()
         menu.addItem(ActionMenuItem("Exporter en .plist…") { [store] in store.exportPlist() })
-        menu.addItem(ActionMenuItem("Sauvegarder la base…") { [store] in store.backupNow() })
+        // Panneau ouvert ensuite pour montrer le résultat (toast et nouvelles entrées).
+        menu.addItem(ActionMenuItem("Importer un .plist…") { [weak self] in
+            self?.store.importPlist()
+            self?.showPopover()
+        })
         menu.addItem(.separator())
         let launch = ActionMenuItem("Ouvrir au démarrage") { [store] in store.setLaunchAtLogin(!store.launchAtLogin) }
         launch.state = store.launchAtLogin ? .on : .off
