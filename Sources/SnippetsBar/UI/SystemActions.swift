@@ -31,6 +31,8 @@ enum SystemActions {
         alert.informativeText = message
         buttons.forEach { alert.addButton(withTitle: $0) }
         if let destructive { alert.buttons[destructive].hasDestructiveAction = true }
+        // NSAlert takes the icon from the bundle, not from applicationIconImage: set it explicitly.
+        alert.icon = NSApp.applicationIconImage
         alert.buttons.last?.keyEquivalent = "\u{1b}"
         let response = inFrontOfMenuBarPanel { alert.runModal() }
         return response.rawValue - NSApplication.ModalResponse.alertFirstButtonReturn.rawValue
