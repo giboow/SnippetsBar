@@ -13,6 +13,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
     private var keyMonitor: Any?
     private var hotKey: GlobalHotKey?
     private lazy var settings = SettingsWindowController(store: store)
+    private var iconReset: Task<Void, Never>?
 
     init(store: SnippetStore) {
         self.store = store
@@ -28,9 +29,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         popover.contentViewController = NSHostingController(rootView: ContentView().environmentObject(store))
 
         if let button = statusItem.button {
-            let image = NSImage(systemSymbolName: "text.quote", accessibilityDescription: "SnippetsBar")
-            image?.isTemplate = true
-            button.image = image
+            button.image = Self.icon("text.quote")
             button.toolTip = String(localized: "SnippetsBar — right-click for settings")
             button.target = self
             button.action = #selector(handleClick)
@@ -38,6 +37,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         }
 
         store.onRequestClose = { [weak self] in self?.closePopover() }
+        store.onCopy = { [weak self] in self?.confirmCopyOnIcon() }
         store.registerShortcut = { [weak self] shortcut in
             guard let self else { return false }
             self.hotKey = nil   // unregisters the previous shortcut
@@ -53,6 +53,23 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             self?.settings.show()
         }
         store.checkForUpdatesIfDue()
+    }
+
+    private static func icon(_ symbol: String) -> NSImage? {
+        let image = NSImage(systemSymbolName: symbol, accessibilityDescription: "SnippetsBar")
+        image?.isTemplate = true
+        return image
+    }
+
+    /// The menu bar icon turns into a checkmark for a moment: visible even once the panel is closed.
+    private func confirmCopyOnIcon() {
+        statusItem.button?.image = Self.icon("checkmark")
+        iconReset?.cancel()
+        iconReset = Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            guard !Task.isCancelled else { return }
+            self?.statusItem.button?.image = Self.icon("text.quote")
+        }
     }
 
     private func toggleFromHotKey() {
