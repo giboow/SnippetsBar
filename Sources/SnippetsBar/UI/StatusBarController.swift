@@ -66,7 +66,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         statusItem.button?.image = Self.icon("checkmark")
         iconReset?.cancel()
         iconReset = Task { @MainActor [weak self] in
-            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            try? await Task.sleep(nanoseconds: 2_500_000_000)
             guard !Task.isCancelled else { return }
             self?.statusItem.button?.image = Self.icon("text.quote")
         }
@@ -134,6 +134,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
     }
 
     func popoverDidClose(_ notification: Notification) {
+        store.clearTransientFeedback()
         for monitor in [outsideClickMonitor, keyMonitor].compactMap({ $0 }) { NSEvent.removeMonitor(monitor) }
         outsideClickMonitor = nil
         keyMonitor = nil

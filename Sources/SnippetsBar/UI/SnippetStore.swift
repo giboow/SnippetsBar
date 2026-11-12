@@ -68,7 +68,7 @@ final class SnippetStore: ObservableObject {
         guard let snippet = visibleSnippets.first(where: { $0.id == selectedID }) else { return false }
         copy(snippet)
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 350_000_000)
+            try? await Task.sleep(nanoseconds: 800_000_000)
             onRequestClose?()
         }
         return true
@@ -177,9 +177,16 @@ final class SnippetStore: ObservableObject {
         onCopy?()
         lastCopiedID = snippet.id
         Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 700_000_000)
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
             if lastCopiedID == snippet.id { lastCopiedID = nil }
         }
+    }
+
+    /// Called when the panel closes: a copy confirmation or a message must not
+    /// show up again the next time it opens.
+    func clearTransientFeedback() {
+        lastCopiedID = nil
+        toast = nil
     }
 
 
