@@ -9,7 +9,16 @@
 "No results" = "Sin resultados";
 "Create a Snippet" = "Crear un fragmento";
 "Snippets: %lld" = "Fragmentos: %lld";
-"Open from anywhere: ⌃⌘V" = "Abrir desde cualquier lugar: ⌃⌘V";
+"Open from anywhere: %@" = "Abrir desde cualquier lugar: %@";
+"Quick Pick Shortcut…" = "Atajo de selección rápida…";
+"Quick Pick Shortcut" = "Atajo de selección rápida";
+"Opens SnippetsBar from any app to pick a snippet with the keyboard." = "Abre SnippetsBar desde cualquier app para elegir un fragmento con el teclado.";
+"Press the new shortcut…" = "Pulsa el nuevo atajo…";
+"Record New Shortcut" = "Grabar nuevo atajo";
+"Reset to Default (%@)" = "Restablecer valor predeterminado (%@)";
+"Use at least ⌘, ⌃ or ⌥. Some system shortcuts can’t be detected as conflicts." = "Usa al menos ⌘, ⌃ u ⌥. Algunos atajos del sistema no se pueden detectar como conflictos.";
+"Shortcut set: %@" = "Atajo definido: %@";
+"This shortcut is already used by another app" = "Otra app ya usa este atajo";
 "Export as .plist…" = "Exportar como .plist…";
 "Import a .plist…" = "Importar un .plist…";
 "Launch at Login" = "Abrir al iniciar sesión";

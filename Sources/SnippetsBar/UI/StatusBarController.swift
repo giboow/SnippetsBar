@@ -37,9 +37,16 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         }
 
         store.onRequestClose = { [weak self] in self?.closePopover() }
-        hotKey = GlobalHotKey(keyCode: kVK_ANSI_V, modifiers: controlKey | cmdKey) { [weak self] in
-            self?.toggleFromHotKey()
+        store.registerShortcut = { [weak self] shortcut in
+            guard let self else { return false }
+            self.hotKey = nil   // unregisters the previous shortcut
+            guard let shortcut else { return true }
+            self.hotKey = GlobalHotKey(keyCode: shortcut.keyCode, modifiers: shortcut.carbonModifiers) { [weak self] in
+                self?.toggleFromHotKey()
+            }
+            return self.hotKey != nil
         }
+        store.resumeShortcut()
     }
 
     private func toggleFromHotKey() {
@@ -127,6 +134,10 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
             self?.showPopover()
         })
         menu.addItem(.separator())
+        menu.addItem(ActionMenuItem(String(localized: "Quick Pick Shortcut…")) { [weak self] in
+            self?.showPopover()
+            self?.store.openShortcutSettings()
+        })
         let launch = ActionMenuItem(String(localized: "Launch at Login")) { [store] in store.setLaunchAtLogin(!store.launchAtLogin) }
         launch.state = store.launchAtLogin ? .on : .off
         menu.addItem(launch)

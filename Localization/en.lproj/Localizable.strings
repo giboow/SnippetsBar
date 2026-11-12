@@ -9,7 +9,16 @@
 "No results" = "No results";
 "Create a Snippet" = "Create a Snippet";
 "Snippets: %lld" = "Snippets: %lld";
-"Open from anywhere: ⌃⌘V" = "Open from anywhere: ⌃⌘V";
+"Open from anywhere: %@" = "Open from anywhere: %@";
+"Quick Pick Shortcut…" = "Quick Pick Shortcut…";
+"Quick Pick Shortcut" = "Quick Pick Shortcut";
+"Opens SnippetsBar from any app to pick a snippet with the keyboard." = "Opens SnippetsBar from any app to pick a snippet with the keyboard.";
+"Press the new shortcut…" = "Press the new shortcut…";
+"Record New Shortcut" = "Record New Shortcut";
+"Reset to Default (%@)" = "Reset to Default (%@)";
+"Use at least ⌘, ⌃ or ⌥. Some system shortcuts can’t be detected as conflicts." = "Use at least ⌘, ⌃ or ⌥. Some system shortcuts can’t be detected as conflicts.";
+"Shortcut set: %@" = "Shortcut set: %@";
+"This shortcut is already used by another app" = "This shortcut is already used by another app";
 "Export as .plist…" = "Export as .plist…";
 "Import a .plist…" = "Import a .plist…";
 "Launch at Login" = "Launch at Login";

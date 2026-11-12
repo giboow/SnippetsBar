@@ -17,6 +17,13 @@ final class SnippetStore: ObservableObject {
     /// Set by StatusBarController: closes the panel after a keyboard pick.
     var onRequestClose: (() -> Void)?
 
+    // Global shortcut of the quick pick.
+    @Published private(set) var quickPickShortcut = HotKeyShortcut.load()
+    @Published private(set) var shortcutScreenRequest = 0
+    /// Set by StatusBarController: registers the global shortcut (nil unregisters);
+    /// returns false when another app already uses it.
+    var registerShortcut: ((HotKeyShortcut?) -> Bool)?
+
     private let repository: SnippetRepository
 
     init(repository: SnippetRepository) {
@@ -59,6 +66,25 @@ final class SnippetStore: ObservableObject {
         onRequestClose?()
         return true
     }
+
+    // MARK: Quick pick shortcut
+
+    /// Keeps the current shortcut when the new one is already taken.
+    func changeShortcut(to shortcut: HotKeyShortcut) {
+        guard let registerShortcut else { return }
+        if registerShortcut(shortcut) {
+            quickPickShortcut = shortcut
+            shortcut.save()
+            flash(String(localized: "Shortcut set: \(shortcut.label)"))
+        } else {
+            _ = registerShortcut(quickPickShortcut)
+            flash(String(localized: "This shortcut is already used by another app"), .error)
+        }
+    }
+
+    func suspendShortcut() { _ = registerShortcut?(nil) }
+    func resumeShortcut() { _ = registerShortcut?(quickPickShortcut) }
+    func openShortcutSettings() { shortcutScreenRequest += 1 }
 
     private func selectFirst() {
         selectedID = visibleSnippets.first?.id

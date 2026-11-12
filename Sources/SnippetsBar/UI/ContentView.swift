@@ -10,12 +10,13 @@ struct ContentView: View {
     enum EditTarget: Equatable {
         case new
         case existing(Snippet)
+        case shortcut
     }
 
     var body: some View {
         ZStack(alignment: .bottom) {
             if let editing {
-                EditorView(target: editing) { self.editing = nil }
+                screen(for: editing)
                     .transition(.move(edge: .trailing).combined(with: .opacity))
             } else {
                 listScreen
@@ -34,6 +35,17 @@ struct ContentView: View {
         .background(Color(nsColor: .windowBackgroundColor))
         .onChange(of: editing) { store.isEditing = $0 != nil }
         .onChange(of: store.searchFocusRequest) { _ in searchFocused = true }
+        .onChange(of: store.shortcutScreenRequest) { _ in editing = .shortcut }
+    }
+
+    @ViewBuilder
+    private func screen(for target: EditTarget) -> some View {
+        switch target {
+        case .new, .existing:
+            EditorView(target: target) { editing = nil }
+        case .shortcut:
+            ShortcutView { editing = nil }
+        }
     }
 
     // MARK: List
@@ -154,13 +166,14 @@ struct ContentView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Spacer()
-            Text("Open from anywhere: ⌃⌘V")
+            Text("Open from anywhere: \(store.quickPickShortcut.label)")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             Menu {
                 Button("Export as .plist…") { store.exportPlist() }
                 Button("Import a .plist…") { store.importPlist() }
                 Divider()
+                Button("Quick Pick Shortcut…") { editing = .shortcut }
                 Toggle("Launch at Login", isOn: Binding(
                     get: { store.launchAtLogin },
                     set: { store.setLaunchAtLogin($0) }

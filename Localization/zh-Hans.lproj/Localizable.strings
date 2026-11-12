@@ -9,7 +9,16 @@
 "No results" = "无结果";
 "Create a Snippet" = "创建片段";
 "Snippets: %lld" = "片段：%lld";
-"Open from anywhere: ⌃⌘V" = "随时打开：⌃⌘V";
+"Open from anywhere: %@" = "随时打开：%@";
+"Quick Pick Shortcut…" = "快速选取快捷键…";
+"Quick Pick Shortcut" = "快速选取快捷键";
+"Opens SnippetsBar from any app to pick a snippet with the keyboard." = "从任意应用打开 SnippetsBar，用键盘选取片段。";
+"Press the new shortcut…" = "请按下新的快捷键…";
+"Record New Shortcut" = "录制新快捷键";
+"Reset to Default (%@)" = "恢复默认 (%@)";
+"Use at least ⌘, ⌃ or ⌥. Some system shortcuts can’t be detected as conflicts." = "请至少使用 ⌘、⌃ 或 ⌥。部分系统快捷键无法检测为冲突。";
+"Shortcut set: %@" = "已设置快捷键：%@";
+"This shortcut is already used by another app" = "此快捷键已被其他应用使用";
 "Export as .plist…" = "导出为 .plist…";
 "Import a .plist…" = "导入 .plist…";
 "Launch at Login" = "登录时打开";

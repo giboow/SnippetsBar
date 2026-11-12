@@ -15,7 +15,8 @@ one-time Gatekeeper step.
 - Instant list and search of all your snippets
 - Click to copy the text, double-click to edit
 - **Quick pick from anywhere: ⌃⌘V** opens the list, type to filter, ↑ ↓ to select,
-  ↩ to copy, then paste with ⌘V (handy in terminals, where Text Replacements don’t work)
+  ↩ to copy, then paste with ⌘V (handy in terminals, where Text Replacements don’t work).
+  The shortcut can be changed in **⋯ › Quick Pick Shortcut…**
 - Add (⌘N), edit, delete
 - Duplicate shortcut detection
 - Automatic database backup before the first change
@@ -23,7 +24,7 @@ one-time Gatekeeper step.
   duplicates are skipped and a single question is asked for existing shortcuts with a
   different text (replace or keep)
 - Launch at login (menu **⋯ › Launch at Login**)
-- Right-click the menu bar icon for settings (export, import, launch at login, GitHub page, report an issue, quit)
+- Right-click the menu bar icon for settings (export, import, quick pick shortcut, launch at login, GitHub page, report an issue, quit)
 
 Requires macOS 13 (Ventura) or later.
 
