@@ -3,6 +3,15 @@
 Manage **macOS Text Replacements** from the menu bar: a simple, free and open-source
 alternative to aText and TextExpander for everyday snippets.
 
+[![Latest release](https://img.shields.io/github/v/release/giboow/SnippetsBar?label=release)](https://github.com/giboow/SnippetsBar/releases/latest)
+[![macOS 13+](https://img.shields.io/badge/macOS-13%2B-blue)](#installation)
+[![License: GPL v3](https://img.shields.io/badge/license-GPL%20v3-green)](LICENSE)
+
+### [⬇ Download the latest version](https://github.com/giboow/SnippetsBar/releases/latest)
+
+Free, universal app (Apple Silicon and Intel). See [Installation](#installation) for the
+one-time Gatekeeper step.
+
 - Instant list and search of all your snippets
 - Click to copy the text, double-click to edit
 - Add (⌘N), edit, delete
@@ -58,9 +67,8 @@ checks that every language has all the keys and the same placeholders (`%@`, `%l
 
 ### From Releases
 
-1. Download `SnippetsBar-vX.Y.Z.zip` from the
-   [Releases](https://github.com/giboow/SnippetsBar/releases) page, unzip it and
-   move `SnippetsBar.app` to `/Applications`.
+1. [Download the latest `SnippetsBar-vX.Y.Z.zip`](https://github.com/giboow/SnippetsBar/releases/latest),
+   unzip it and move `SnippetsBar.app` to `/Applications`.
 2. The app is not signed by an identified Apple developer, so macOS refuses to open it
    the first time. Go to **System Settings › Privacy & Security** and click
    **Open Anyway** at the bottom of the page.
