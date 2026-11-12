@@ -7,7 +7,7 @@ struct SettingsView: View {
 
     @State private var recording = false
     @State private var keyMonitor: Any?
-    @State private var shortcutTaken = false
+    @State private var conflict: SnippetStore.ShortcutChange?
 
     var body: some View {
         Form {
@@ -31,9 +31,12 @@ struct SettingsView: View {
                     }
                     .help("Record New Shortcut")
                 }
-                if shortcutTaken {
+                if let conflict {
                     Label {
-                        Text("This shortcut is already used by another app")
+                        Text(conflict == .usedByMacOS
+                             ? LocalizedStringKey("This shortcut is used by macOS (System Settings › Keyboard › Keyboard Shortcuts)")
+                             : LocalizedStringKey("This shortcut is already used by another app"))
+                            .fixedSize(horizontal: false, vertical: true)
                     } icon: {
                         Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
                     }
@@ -42,14 +45,14 @@ struct SettingsView: View {
                 HStack {
                     Spacer()
                     Button("Reset to Default (\(HotKeyShortcut.default.label))") {
-                        shortcutTaken = !store.changeShortcut(to: .default)
+                        apply(store.changeShortcut(to: .default))
                     }
                     .disabled(recording || store.quickPickShortcut == .default)
                 }
             } header: {
                 Text("Quick Pick")
             } footer: {
-                Text("Opens SnippetsBar from any app to pick a snippet with the keyboard. Use at least ⌘, ⌃ or ⌥. Some system shortcuts can’t be detected as conflicts.")
+                Text("Opens SnippetsBar from any app to pick a snippet with the keyboard. Use at least ⌘, ⌃ or ⌥. Conflicts with macOS and other global shortcuts are detected, but not with menu shortcuts inside apps.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -65,19 +68,23 @@ struct SettingsView: View {
     private func startRecording() {
         // The current shortcut would otherwise fire instead of being recorded.
         store.suspendShortcut()
-        shortcutTaken = false
+        conflict = nil
         recording = true
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
             if Int(event.keyCode) == kVK_Escape {
                 stopRecording(cancelled: true)
             } else if let shortcut = HotKeyShortcut(event: event) {
                 stopRecording(cancelled: false)
-                shortcutTaken = !store.changeShortcut(to: shortcut)
+                apply(store.changeShortcut(to: shortcut))
             } else {
                 NSSound.beep()
             }
             return nil
         }
+    }
+
+    private func apply(_ result: SnippetStore.ShortcutChange) {
+        conflict = result == .done ? nil : result
     }
 
     private func stopRecording(cancelled: Bool) {

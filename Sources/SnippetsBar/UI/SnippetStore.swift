@@ -68,17 +68,23 @@ final class SnippetStore: ObservableObject {
 
     // MARK: Quick pick shortcut
 
-    /// Returns false, keeping the current shortcut, when the new one is already taken.
+    enum ShortcutChange { case done, usedByMacOS, usedByAnotherApp }
+
+    /// Keeps the current shortcut when the new one is used by macOS or another app.
     @discardableResult
-    func changeShortcut(to shortcut: HotKeyShortcut) -> Bool {
-        guard let registerShortcut else { return false }
+    func changeShortcut(to shortcut: HotKeyShortcut) -> ShortcutChange {
+        guard let registerShortcut else { return .usedByAnotherApp }
+        if SystemShortcuts.contains(shortcut) {
+            _ = registerShortcut(quickPickShortcut)
+            return .usedByMacOS
+        }
         guard registerShortcut(shortcut) else {
             _ = registerShortcut(quickPickShortcut)
-            return false
+            return .usedByAnotherApp
         }
         quickPickShortcut = shortcut
         shortcut.save()
-        return true
+        return .done
     }
 
     func suspendShortcut() { _ = registerShortcut?(nil) }

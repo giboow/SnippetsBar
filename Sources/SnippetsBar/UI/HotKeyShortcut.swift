@@ -72,3 +72,19 @@ struct HotKeyShortcut: Equatable {
         defaults.set(key, forKey: Keys.key)
     }
 }
+
+/// macOS keyboard shortcuts (System Settings › Keyboard › Keyboard Shortcuts), which take
+/// precedence over app shortcuts.
+enum SystemShortcuts {
+    static func contains(_ shortcut: HotKeyShortcut) -> Bool {
+        var hotKeys: Unmanaged<CFArray>?
+        guard CopySymbolicHotKeys(&hotKeys) == noErr,
+              let list = hotKeys?.takeRetainedValue() as? [[String: Any]] else { return false }
+        let mask = cmdKey | shiftKey | optionKey | controlKey
+        return list.contains { hotKey in
+            (hotKey[kHISymbolicHotKeyEnabled as String] as? Bool) == true
+                && (hotKey[kHISymbolicHotKeyCode as String] as? Int) == shortcut.keyCode
+                && ((hotKey[kHISymbolicHotKeyModifiers as String] as? Int) ?? 0) & mask == shortcut.carbonModifiers
+        }
+    }
+}

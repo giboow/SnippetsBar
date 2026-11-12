@@ -15,9 +15,10 @@
 "General" = "Allgemein";
 "Quick Pick" = "Schnellauswahl";
 "Record New Shortcut" = "Neuen Kurzbefehl aufnehmen";
-"Opens SnippetsBar from any app to pick a snippet with the keyboard. Use at least ⌘, ⌃ or ⌥. Some system shortcuts can’t be detected as conflicts." = "Öffnet SnippetsBar aus jeder App, um ein Snippet per Tastatur auszuwählen. Mindestens ⌘, ⌃ oder ⌥ verwenden. Manche Systemkurzbefehle werden nicht als Konflikt erkannt.";
 "Press the new shortcut…" = "Neuen Kurzbefehl drücken …";
 "Reset to Default (%@)" = "Auf Standard zurücksetzen (%@)";
+"This shortcut is used by macOS (System Settings › Keyboard › Keyboard Shortcuts)" = "Dieser Kurzbefehl wird von macOS verwendet (Systemeinstellungen › Tastatur › Tastaturkurzbefehle)";
+"Opens SnippetsBar from any app to pick a snippet with the keyboard. Use at least ⌘, ⌃ or ⌥. Conflicts with macOS and other global shortcuts are detected, but not with menu shortcuts inside apps." = "Öffnet SnippetsBar aus jeder App, um ein Snippet per Tastatur auszuwählen. Mindestens ⌘, ⌃ oder ⌥ verwenden. Konflikte mit macOS und anderen globalen Kurzbefehlen werden erkannt, nicht aber mit Menükurzbefehlen in Apps.";
 "This shortcut is already used by another app" = "Dieser Kurzbefehl wird bereits von einer anderen App verwendet";
 "Export as .plist…" = "Als .plist exportieren …";
 "Import a .plist…" = ".plist importieren …";
