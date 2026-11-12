@@ -3,6 +3,7 @@ import SnippetsBarCore
 
 struct SnippetRow: View {
     let snippet: Snippet
+    var isSelected = false
     let onCopy: () -> Void
     let onEdit: () -> Void
     @State private var hovering = false
@@ -28,8 +29,7 @@ struct SnippetRow: View {
             }
         }
         .padding(.horizontal, 8).padding(.vertical, 7)
-        .background(hovering ? Color.primary.opacity(0.07) : .clear,
-                    in: RoundedRectangle(cornerRadius: 7))
+        .background(background, in: RoundedRectangle(cornerRadius: 7))
         .contentShape(Rectangle())
         .onHover { hovering = $0 }
         .onTapGesture(count: 2, perform: onEdit)
@@ -44,9 +44,15 @@ struct SnippetRow: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(snippet.shortcut): \(snippet.phrase)")
         .accessibilityHint("Copies the text")
-        .accessibilityAddTraits(.isButton)
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
         .accessibilityAction(.default, onCopy)
         .accessibilityAction(named: "Edit", onEdit)
+    }
+
+    /// Keyboard selection wins over hover.
+    private var background: Color {
+        if isSelected { return Color.accentColor.opacity(0.18) }
+        return hovering ? Color.primary.opacity(0.07) : .clear
     }
 
     /// Shortcut in the primary text color; the accent color is decoration only.

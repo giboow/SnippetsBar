@@ -14,14 +14,17 @@ one-time Gatekeeper step.
 
 - Instant list and search of all your snippets
 - Click to copy the text, double-click to edit
+- **Quick pick from anywhere: ⌃⌘V** opens the list, type to filter, ↑ ↓ to select,
+  ↩ to copy, then paste with ⌘V (handy in terminals, where Text Replacements don’t work).
+  The shortcut can be changed in **Settings** (⋯ › Settings…, ⌘,)
 - Add (⌘N), edit, delete
 - Duplicate shortcut detection
 - Automatic database backup before the first change
 - `.plist` export and import (same format as System Settings): on import, exact
   duplicates are skipped and a single question is asked for existing shortcuts with a
   different text (replace or keep)
-- Launch at login (menu **⋯ › Launch at Login**)
-- Right-click the menu bar icon for settings (export, import, launch at login, GitHub page, report an issue, quit)
+- Settings window (⌘,): launch at login and the quick pick shortcut
+- Right-click the menu bar icon for quick actions (export, import, settings, GitHub page, report an issue, quit)
 
 Requires macOS 13 (Ventura) or later.
 
@@ -114,7 +117,19 @@ If the app shows an error when opening it, add SnippetsBar to
 signature): remove SnippetsBar from the list with the “–” button, then add it again.
 
 Launch at login is enabled on first launch (macOS shows “Background Items Added”).
-To turn it off: menu **⋯ › Launch at Login**, or System Settings › General › Login Items.
+To turn it off: **⋯ › Settings… › Launch at Login**, or System Settings › General › Login Items.
+
+## Where it works
+
+Expansion is done by macOS itself, not by SnippetsBar, so it works wherever macOS Text
+Replacements work: apps using the standard macOS text fields, such as Mail, Notes,
+Messages, TextEdit, Pages or Safari.
+
+It does **not** work in apps that handle text input themselves, notably terminals
+(Terminal, iTerm2, Warp, the VS Code terminal) and often code editors, Electron apps
+or some web fields in Chrome and Firefox. This is a macOS limitation.
+
+Workaround: click a snippet in SnippetsBar to copy its text, then paste it with ⌘V.
 
 ## How it works
 
@@ -127,11 +142,14 @@ the SQLite (Core Data) database used by macOS directly:
   syncs too.
 - **Before the first write** of each session, a copy of the database is saved to
   `~/Library/Application Support/SnippetsBar/Backups/`.
+- **After every change** (and at launch), the list is also copied to the global
+  preference `NSUserDictionaryReplacementItems`, which apps such as Mail actually read:
+  macOS does not refresh it when the database is modified directly.
 
 ⚠️ Since this is an undocumented internal format:
 
-- changes usually apply immediately, but some apps or System Settings may only see
-  them after logging out and back in;
+- apps read the list when they launch: quit and reopen an app (⌘Q) to see a new or
+  changed snippet there; System Settings may only show changes after logging out;
 - a future macOS version may change the format. If something goes wrong, restore a
   backup, or use **⋯ › Export as .plist…** and drag the file into
   System Settings › Keyboard › Text Replacements (the fully official method).
