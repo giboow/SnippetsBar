@@ -14,6 +14,8 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
     private var hotKey: GlobalHotKey?
     private lazy var settings = SettingsWindowController(store: store)
     private var iconReset: Task<Void, Never>?
+    /// App that was in front when the panel opened, given focus back when the panel is dismissed.
+    private var previousApp: NSRunningApplication?
 
     init(store: SnippetStore) {
         self.store = store
@@ -23,7 +25,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         // the import file picker and alerts must not close the panel.
         popover.behavior = .applicationDefined
         popover.delegate = self
-        NotificationCenter.default.addObserver(self, selector: #selector(closePopover),
+        NotificationCenter.default.addObserver(self, selector: #selector(closePopoverForOtherApp),
                                                name: NSApplication.didResignActiveNotification, object: nil)
         popover.contentSize = NSSize(width: 380, height: 480)
         popover.contentViewController = NSHostingController(rootView: ContentView().environmentObject(store))
@@ -49,7 +51,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         }
         store.resumeShortcut()
         store.onOpenSettings = { [weak self] in
-            self?.closePopover()
+            self?.closePopoverForOtherApp()
             self?.settings.show()
         }
         store.checkForUpdatesIfDue()
@@ -91,7 +93,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
 
     private func togglePopover() {
         if popover.isShown {
-            popover.performClose(nil)
+            closePopover()
         } else {
             showPopover()
         }
@@ -103,6 +105,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         store.refreshLaunchAtLogin()
         store.prepareQuickPick()
         store.checkForUpdatesIfDue()
+        previousApp = NSApp.isActive ? nil : NSWorkspace.shared.frontmostApplication
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         // No Dock icon: without activation, text fields don't receive keyboard input.
         NSApp.activate(ignoringOtherApps: true)
@@ -110,7 +113,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         SystemActions.menuBarPanel = popover.contentViewController?.view.window
         // Click in another app: close. (No permission needed for mouse events.)
         outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
-            self?.closePopover()
+            self?.closePopoverForOtherApp()
         }
         // Keyboard pick in the list: ↑ ↓ to select, ↩ to copy, Escape to close.
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
@@ -129,10 +132,21 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         }
     }
 
-    @objc private func closePopover() {
+    /// Dismissed by the user (Escape, shortcut, icon, copy): the previous app gets focus back,
+    /// so the Settings window, brought forward by the activation, doesn't end up in front.
+    private func closePopover() {
+        guard popover.isShown, NSApp.modalWindow == nil else { return }
+        let app = previousApp
+        closePopoverForOtherApp()
+        if let app, !app.isTerminated { app.activate(options: []) }
+    }
+
+    /// Another app or window takes focus (click elsewhere, app switch, Settings): nothing to restore.
+    @objc private func closePopoverForOtherApp() {
         // During a dialog (file picker, alert) the panel stays open: the file picker partly runs
         // in another process, so its clicks look like outside clicks.
         guard popover.isShown, NSApp.modalWindow == nil else { return }
+        previousApp = nil
         popover.performClose(nil)
     }
 
