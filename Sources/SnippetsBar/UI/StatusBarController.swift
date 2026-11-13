@@ -25,7 +25,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         // the import file picker and alerts must not close the panel.
         popover.behavior = .applicationDefined
         popover.delegate = self
-        NotificationCenter.default.addObserver(self, selector: #selector(closePopoverForOtherApp),
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidResignActive),
                                                name: NSApplication.didResignActiveNotification, object: nil)
         popover.contentSize = NSSize(width: 380, height: 480)
         popover.contentViewController = NSHostingController(rootView: ContentView().environmentObject(store))
@@ -113,7 +113,8 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         SystemActions.menuBarPanel = popover.contentViewController?.view.window
         // Click in another app: close. (No permission needed for mouse events.)
         outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
-            self?.closePopoverForOtherApp()
+            guard let self, !self.isPressingIcon else { return }
+            self.closePopoverForOtherApp()
         }
         // Keyboard pick in the list: ↑ ↓ to select, ↩ to copy, Escape to close.
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
@@ -147,7 +148,23 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
         // in another process, so its clicks look like outside clicks.
         guard popover.isShown, NSApp.modalWindow == nil else { return }
         previousApp = nil
+        // Closed at once, like a menu: during the fade-out the panel still counts as shown, so a
+        // click on the icon meant to reopen it would close it instead.
+        popover.animates = false
         popover.performClose(nil)
+        popover.animates = true
+    }
+
+    @objc private func appDidResignActive() {
+        guard !isPressingIcon else { return }
+        closePopoverForOtherApp()
+    }
+
+    /// On recent macOS the menu bar is hosted by the system: pressing the icon deactivates the app
+    /// and reaches the global click monitor. The click on the icon then toggles the panel itself.
+    private var isPressingIcon: Bool {
+        guard NSEvent.pressedMouseButtons != 0, let window = statusItem.button?.window else { return false }
+        return window.frame.contains(NSEvent.mouseLocation)
     }
 
     func popoverDidClose(_ notification: Notification) {
@@ -158,7 +175,7 @@ final class StatusBarController: NSObject, NSPopoverDelegate {
     }
 
     private func showSettingsMenu() {
-        popover.performClose(nil)
+        closePopoverForOtherApp()
         // Menu attached for one click only: otherwise it would replace the left click too.
         statusItem.menu = makeSettingsMenu()
         statusItem.button?.performClick(nil)
