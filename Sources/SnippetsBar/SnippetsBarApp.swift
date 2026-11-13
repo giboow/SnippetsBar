@@ -27,9 +27,23 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.applicationIconImage = AppIconView.applicationIcon()
         }
         LaunchAtLogin.enableOnFirstLaunch()
+        Self.disableTextReplacementInOwnFields()
         let repository = TextReplacementsRepository(cache: GlobalPreferencesReplacementsCache())
         repository.refreshCache()
         statusBar = StatusBarController(store: SnippetStore(repository: repository))
+    }
+
+    /// Typing a full shortcut in the app's own fields (search, editor) must not expand it.
+    /// The `NSAutomaticTextReplacementEnabled` default is not read by new text views, so each
+    /// text view (field editors included) is switched off on its first keystroke, before replacements
+    /// are checked.
+    private static func disableTextReplacementInOwnFields() {
+        NotificationCenter.default.addObserver(forName: NSText.didBeginEditingNotification,
+                                               object: nil, queue: .main) { notification in
+            MainActor.assumeIsolated {
+                (notification.object as? NSTextView)?.isAutomaticTextReplacementEnabled = false
+            }
+        }
     }
 
     /// Invisible menu (no Dock icon) but required for the editing shortcuts
