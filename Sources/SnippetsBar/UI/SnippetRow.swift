@@ -23,19 +23,24 @@ struct SnippetRow: View {
                 .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-            if isCopied {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(.green)
-                    .transition(.scale.combined(with: .opacity))
-                    .accessibilityHidden(true)
-            } else if hovering {
-                HStack(spacing: 4) {
-                    iconButton("doc.on.doc", help: "Copy Text", action: onCopy)
-                    iconButton("pencil", help: "Edit", action: onEdit)
+            // Space always reserved: showing the buttons on hover must not reflow the text.
+            ZStack(alignment: .trailing) {
+                if isCopied {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.green)
+                        .transition(.scale.combined(with: .opacity))
+                        .accessibilityHidden(true)
+                } else {
+                    HStack(spacing: 4) {
+                        iconButton("doc.on.doc", help: "Copy Text", action: onCopy)
+                        iconButton("pencil", help: "Edit", action: onEdit)
+                    }
+                    .opacity(hovering ? 1 : 0)
+                    .allowsHitTesting(hovering)
                 }
-                .transition(.opacity)
             }
+            .frame(width: 48, alignment: .trailing)
         }
         .padding(.horizontal, 8).padding(.vertical, 7)
         .background(background, in: RoundedRectangle(cornerRadius: 7))
