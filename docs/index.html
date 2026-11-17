@@ -85,7 +85,7 @@ kbd {
   border-bottom: 1px solid var(--line); font-size: 0.85rem;
 }
 .menubar .wrap { display: flex; align-items: center; gap: 18px; height: 34px; }
-.menubar .app { font-weight: 600; }
+.menubar .app { display: flex; align-items: center; gap: 8px; font-weight: 600; }
 .menubar .spacer { flex: 1; }
 .menubar .status { display: flex; align-items: center; gap: 14px; color: var(--muted); }
 .menubar img { width: 20px; height: 20px; display: block; border-radius: 5px; }
@@ -199,7 +199,7 @@ footer nav { display: flex; gap: 20px; flex-wrap: wrap; }
 <body>
 <header class="menubar">
   <div class="wrap">
-    <span class="app">SnippetsBar</span>
+    <span class="app"><img src="icon.png" alt="" width="20" height="20">SnippetsBar</span>
     <nav class="links" aria-label="Sections">
       <a href="#how">How it works</a>
       <a href="#features">Features</a>
@@ -208,7 +208,6 @@ footer nav { display: flex; gap: 20px; flex-wrap: wrap; }
     <span class="spacer"></span>
     <span class="status">
       <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch to dark mode" title="Switch to dark mode"></button>
-      <img src="icon.png" alt="SnippetsBar menu bar icon" width="20" height="20">
     </span>
   </div>
 </header>
