@@ -3,12 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SnippetsBar</title>
+<title>SnippetsBar: manage macOS Text Replacements from the menu bar</title>
+<link rel="canonical" href="https://giboow.fr/SnippetsBar/">
 <meta name="description" content="Manage macOS Text Replacements from the menu bar: a simple, free and open-source alternative to aText and TextExpander.">
-<meta property="og:title" content="SnippetsBar">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="SnippetsBar">
+<meta property="og:url" content="https://giboow.fr/SnippetsBar/">
+<meta property="og:title" content="SnippetsBar: manage macOS Text Replacements from the menu bar">
 <meta property="og:description" content="Manage macOS Text Replacements from the menu bar. Free and open source.">
-<meta property="og:image" content="https://giboow.github.io/SnippetsBar/icon.png">
-<link rel="icon" type="image/png" href="icon.png">
+<meta property="og:image" content="https://giboow.fr/SnippetsBar/icon.png">
+<meta property="og:image:alt" content="SnippetsBar app icon">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "SnippetsBar",
+  "description": "Manage macOS Text Replacements from the menu bar: a simple, free and open-source alternative to aText and TextExpander.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "macOS 13 or later",
+  "url": "https://giboow.fr/SnippetsBar/",
+  "downloadUrl": "https://github.com/giboow/SnippetsBar/releases/latest",
+  "screenshot": "https://giboow.fr/SnippetsBar/screenshots/list-light.png",
+  "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+  "author": { "@type": "Person", "name": "Philippe Gibert" },
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+<link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Figtree:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
@@ -85,7 +108,7 @@ kbd {
   border-bottom: 1px solid var(--line); font-size: 0.85rem;
 }
 .menubar .wrap { display: flex; align-items: center; gap: 18px; height: 34px; }
-.menubar .app { font-weight: 600; }
+.menubar .app { display: flex; align-items: center; gap: 8px; font-weight: 600; }
 .menubar .spacer { flex: 1; }
 .menubar .status { display: flex; align-items: center; gap: 14px; color: var(--muted); }
 .menubar img { width: 20px; height: 20px; display: block; border-radius: 5px; }
@@ -199,7 +222,7 @@ footer nav { display: flex; gap: 20px; flex-wrap: wrap; }
 <body>
 <header class="menubar">
   <div class="wrap">
-    <span class="app">SnippetsBar</span>
+    <span class="app"><img src="icon.png" alt="" width="20" height="20">SnippetsBar</span>
     <nav class="links" aria-label="Sections">
       <a href="#how">How it works</a>
       <a href="#features">Features</a>
@@ -208,7 +231,6 @@ footer nav { display: flex; gap: 20px; flex-wrap: wrap; }
     <span class="spacer"></span>
     <span class="status">
       <button class="theme-btn" id="themeBtn" type="button" aria-label="Switch to dark mode" title="Switch to dark mode"></button>
-      <img src="icon.png" alt="SnippetsBar menu bar icon" width="20" height="20">
     </span>
   </div>
 </header>
@@ -222,7 +244,7 @@ footer nav { display: flex; gap: 20px; flex-wrap: wrap; }
           <span class="eyebrow">macOS menu bar app · free · GPL v3</span>
         </div>
         <h1>Your Mac already expands text. <em>SnippetsBar</em> makes it easy to manage.</h1>
-        <p class="lede">A small front end for the built-in macOS Text Replacements. List, search, add and edit your snippets from the menu bar. macOS does the expansion and iCloud syncs them to your iPhone and iPad.</p>
+        <p class="lede">A small front end for the built-in macOS Text Replacements. List, search, add and edit your snippets from the menu bar. macOS does the expansion and iCloud syncs them to your iPhone and iPad. A free, open-source alternative to aText and TextExpander.</p>
         <div class="cta">
           <a class="btn btn-primary" href="https://github.com/giboow/SnippetsBar/releases/latest">Download for macOS</a>
           <a class="link" href="https://github.com/giboow/SnippetsBar">View on GitHub →</a>
